@@ -1,3 +1,7 @@
+body {
+  overflow: hidden;
+}
+
 .App {
   font-family: sans-serif;
   font-family: "DM Sans", sans-serif;
