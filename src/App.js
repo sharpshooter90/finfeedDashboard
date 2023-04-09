@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import BubbleChart from "./components/EntitiesBubbleChart";
+import "./styles.css";
 import { countOccurrences } from "./utils";
 const NewsItem = ({ newsItem, index }) => {
   const [isOccurredWordsVisible, setIsOccurredWordsVisible] = useState(false);
@@ -169,7 +170,7 @@ function App() {
         })}
       </div> */}
 
-      <div>
+      <div style={{ width: "360px" }}>
         {data ? (
           <div>
             {data?.map((newsItem, index) => {
@@ -186,6 +187,7 @@ function App() {
           <BubbleChart data={dataArray} width={800} height={600} />
         </div>
       )}
+      <div>Pie Chart</div>
     </div>
   );
 }
