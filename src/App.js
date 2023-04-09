@@ -10,7 +10,9 @@ import Typography from "@mui/joy/Typography";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+
 import BubbleChart from "./components/EntitiesBubbleChart";
+import SentimentPieChart from "./components/SentimentPieChart";
 
 import { countOccurrences } from "./utils";
 
@@ -154,12 +156,18 @@ const NewsItem = ({ newsItem, index }) => {
 function App() {
   const [data, setData] = useState(null);
   const [entities, setEntities] = useState(null);
+  const [sentimentData, setsentimentData] = useState(null);
 
   useEffect(() => {
     fetchData();
   }, []);
 
   const parseNewsData = async (data) => {
+    // Add counters for positive, negative, and neutral sentiment
+    let posCount = 0;
+    let negCount = 0;
+    let neuCount = 0;
+
     const response = JSON.parse(data);
     const rawData = response.data;
     setEntities(response.entities);
@@ -189,6 +197,15 @@ function App() {
         const pos = sentimentResponse.data.positive_sentiment_percentage;
         const neg = sentimentResponse.data.negative_sentiment_percentage;
 
+        // Update sentiment counters
+        if (pos > 0) {
+          posCount++;
+        } else if (neg > 0) {
+          negCount++;
+        } else {
+          neuCount++;
+        }
+
         return {
           newsTitle,
           timestamp,
@@ -199,6 +216,19 @@ function App() {
         };
       })
     );
+
+    // Calculate the percentages
+    const totalNews = parsedData.length;
+    const posPercentage = (posCount / totalNews) * 100;
+    const negPercentage = (negCount / totalNews) * 100;
+    const neuPercentage = (neuCount / totalNews) * 100;
+
+    // Set the sentimentData state
+    setsentimentData({
+      positive: posPercentage,
+      negative: negPercentage,
+      neutral: neuPercentage,
+    });
 
     return parsedData;
   };
@@ -307,7 +337,9 @@ function App() {
           <BubbleChart data={dataArray} width={800} height={600} />
         </div>
       )}
-      <div>Pie Chart</div>
+      <div>
+        <SentimentPieChart sentimentData={sentimentData} />
+      </div>
     </StyledFullHeightContainer>
   );
 }
