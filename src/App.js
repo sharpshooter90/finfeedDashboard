@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
+import BubbleChart from "./components/EntitiesBubbleChart";
 import { countOccurrences } from "./utils";
-
 const NewsItem = ({ newsItem, index }) => {
   const [isOccurredWordsVisible, setIsOccurredWordsVisible] = useState(false);
 
@@ -26,6 +26,7 @@ const NewsItem = ({ newsItem, index }) => {
 
 function App() {
   const [data, setData] = useState(null);
+  const [entities, setEntities] = useState(null);
   const [isOccurredWordsVisible, setIsOccurredWordsVisible] = useState(false);
 
   const toggleOccurredWordsVisibility = () => {
@@ -39,8 +40,7 @@ function App() {
   const parseNewsData = (data) => {
     const response = JSON.parse(data);
     const rawData = response.data;
-    console.log("entities", response.entities);
-
+    setEntities(response.entities);
     // get entities and set only keys
     const rawEntities = response.entities;
     const keys = Object.keys(rawEntities);
@@ -92,22 +92,99 @@ function App() {
     }
   };
 
+  const dataArray = [
+    {
+      label: "Dividend Income",
+      value: 1,
+      positive_sentiment_percentage: "100",
+      negative_sentiment_percentage: "0",
+    },
+    {
+      label: "Silicon Valley Bank's",
+      value: 1,
+      positive_sentiment_percentage: "100",
+      negative_sentiment_percentage: "0",
+    },
+    {
+      label: "Bank Stocks Worth Buying",
+      value: 1,
+      positive_sentiment_percentage: "100",
+      negative_sentiment_percentage: "0",
+    },
+    {
+      label: "Bank 'Could Be Next Shoe",
+      value: 1,
+      positive_sentiment_percentage: "100",
+      negative_sentiment_percentage: "0",
+    },
+    {
+      label: "Talking Banks and",
+      value: 1,
+      positive_sentiment_percentage: "100",
+      negative_sentiment_percentage: "0",
+    },
+    {
+      label: "First Republic Bank Stock",
+      value: 1,
+      positive_sentiment_percentage: "100",
+      negative_sentiment_percentage: "0",
+    },
+    {
+      label: "Liquid Media Group Ltd.",
+      value: 4,
+      positive_sentiment_percentage: "0",
+      negative_sentiment_percentage: "100",
+    },
+    {
+      label: "Millennium Group International Holdings Limited",
+      value: 1,
+      positive_sentiment_percentage: "100",
+      negative_sentiment_percentage: "0",
+    },
+    {
+      label: "Texas Capital Bancshares, Inc.",
+      value: 1,
+      positive_sentiment_percentage: "100",
+      negative_sentiment_percentage: "0",
+    },
+    {
+      label: "Kentucky First Federal Bancorp Announces Payment",
+      value: 1,
+      positive_sentiment_percentage: "100",
+      negative_sentiment_percentage: "0",
+    },
+    {
+      label: "Honeywell International Inc.",
+      value: 1,
+      positive_sentiment_percentage: "100",
+      negative_sentiment_percentage: "0",
+    },
+  ];
+
   return (
-    <div className="App">
+    <div className="App" style={{ display: "flex" }}>
       {/* <div>
         {Object.keys.categories?.map((key) => {
           return <div>{key}</div>;
         })}
       </div> */}
 
-      {data ? (
+      <div>
+        {data ? (
+          <div>
+            {data?.map((newsItem, index) => {
+              return <NewsItem newsItem={newsItem} index={index} />;
+            })}
+          </div>
+        ) : (
+          <p>Loading data...</p>
+        )}
+      </div>
+      {console.log("entities", entities)}
+      {entities && (
         <div>
-          {data?.map((newsItem, index) => {
-            return <NewsItem newsItem={newsItem} index={index} />;
-          })}
+          <BubbleChart data={dataArray} width={800} height={600} />
         </div>
-      ) : (
-        <p>Loading data...</p>
       )}
     </div>
   );
