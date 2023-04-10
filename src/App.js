@@ -1,8 +1,8 @@
-import ArchiveIcon from "@mui/icons-material/Archive";
-import FavoriteIcon from "@mui/icons-material/Favorite";
+import BubbleChartIcon from "@mui/icons-material/BubbleChart";
+import DonutLargeIcon from "@mui/icons-material/DonutLarge";
+import FeedIcon from "@mui/icons-material/Feed";
 import MoodIcon from "@mui/icons-material/Mood";
 import MoodBadIcon from "@mui/icons-material/MoodBad";
-import RestoreIcon from "@mui/icons-material/Restore";
 import SentimentNeutralOutlinedIcon from "@mui/icons-material/SentimentNeutralOutlined";
 import Box from "@mui/joy/Box";
 import Card from "@mui/joy/Card";
@@ -381,25 +381,31 @@ function App() {
           <div>
             {entities && (
               <div>
-                <BubbleChart data={bubbleChartData} width={800} height={600} />
+                <BubbleChart data={bubbleChartData} width={300} height={300} />
               </div>
             )}
           </div>
         )}
         {tabValue === 2 && (
-          <div>
+          <Box m={1} p={2}>
             <SentimentPieChart sentimentData={sentimentData} />
-          </div>
+          </Box>
         )}
 
         <Paper
-          sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }}
-          elevation={3}
+          sx={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 1000 }}
+          elevation={6}
         >
           <BottomNavigation showLabels value={tabValue} onChange={handleChange}>
-            <BottomNavigationAction label="Recents" icon={<RestoreIcon />} />
-            <BottomNavigationAction label="Favorites" icon={<FavoriteIcon />} />
-            <BottomNavigationAction label="Archive" icon={<ArchiveIcon />} />
+            <BottomNavigationAction label="News Feeds" icon={<FeedIcon />} />
+            <BottomNavigationAction
+              label="Bubble Chart"
+              icon={<BubbleChartIcon />}
+            />
+            <BottomNavigationAction
+              label="Pie Chart"
+              icon={<DonutLargeIcon />}
+            />
           </BottomNavigation>
         </Paper>
       </div>
