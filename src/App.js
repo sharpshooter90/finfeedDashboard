@@ -1,5 +1,8 @@
+import ArchiveIcon from "@mui/icons-material/Archive";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import MoodIcon from "@mui/icons-material/Mood";
 import MoodBadIcon from "@mui/icons-material/MoodBad";
+import RestoreIcon from "@mui/icons-material/Restore";
 import SentimentNeutralOutlinedIcon from "@mui/icons-material/SentimentNeutralOutlined";
 import Box from "@mui/joy/Box";
 import Card from "@mui/joy/Card";
@@ -8,6 +11,10 @@ import Divider from "@mui/joy/Divider";
 import Stack from "@mui/joy/Stack";
 import Switch from "@mui/joy/Switch";
 import Typography from "@mui/joy/Typography";
+import BottomNavigation from "@mui/material/BottomNavigation";
+import BottomNavigationAction from "@mui/material/BottomNavigationAction";
+import Paper from "@mui/material/Paper";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Moment from "react-moment";
@@ -196,6 +203,12 @@ function App() {
   const [bubbleChartData, setBubbleChartData] = useState(null);
   const [selectedSource, setSelectedSource] = useState("WSJ");
   const [highlightTextChecked, setHighlightTextChecked] = React.useState(false);
+  const [tabValue, setTabValue] = useState(0);
+
+  const isMobile = useMediaQuery("(max-width: 600px)");
+  const handleChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
 
   useEffect(() => {
     fetchData();
@@ -330,6 +343,68 @@ function App() {
     setHighlightTextChecked(event.target.checked);
     toggleHighlight(event.target.checked);
   };
+
+  if (isMobile) {
+    return (
+      <div>
+        <select value={selectedSource} onChange={handleSourceChange}>
+          <option value="WSJ">WSJ</option>
+          <option value="CNBC">CNBC</option>
+          <option value="Polygon">Polygon</option>
+        </select>
+        <Typography
+          component="label"
+          endDecorator={
+            <Switch
+              checked={highlightTextChecked}
+              onChange={handleSwitchChange}
+              sx={{ ml: 1 }}
+            />
+          }
+        >
+          Highlight Word Occurances
+        </Typography>
+        {tabValue === 0 && (
+          <div>
+            {data ? (
+              <div>
+                {data?.map((newsItem, index) => {
+                  return <NewsItem newsItem={newsItem} index={index} />;
+                })}
+              </div>
+            ) : (
+              <p>Loading data...</p>
+            )}
+          </div>
+        )}
+        {tabValue === 1 && (
+          <div>
+            {entities && (
+              <div>
+                <BubbleChart data={bubbleChartData} width={800} height={600} />
+              </div>
+            )}
+          </div>
+        )}
+        {tabValue === 2 && (
+          <div>
+            <SentimentPieChart sentimentData={sentimentData} />
+          </div>
+        )}
+
+        <Paper
+          sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }}
+          elevation={3}
+        >
+          <BottomNavigation showLabels value={tabValue} onChange={handleChange}>
+            <BottomNavigationAction label="Recents" icon={<RestoreIcon />} />
+            <BottomNavigationAction label="Favorites" icon={<FavoriteIcon />} />
+            <BottomNavigationAction label="Archive" icon={<ArchiveIcon />} />
+          </BottomNavigation>
+        </Paper>
+      </div>
+    );
+  }
 
   return (
     <StyledFullHeightContainer className="App" style={{ display: "flex" }}>
