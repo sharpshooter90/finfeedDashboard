@@ -157,6 +157,7 @@ function App() {
   const [data, setData] = useState(null);
   const [entities, setEntities] = useState(null);
   const [sentimentData, setsentimentData] = useState(null);
+  const [bubbleChartData, setBubbleChartData] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -229,6 +230,10 @@ function App() {
       negative: negPercentage,
       neutral: neuPercentage,
     });
+
+    // Call the createBubbleChartData function and set the bubbleChartData state
+    const dataArray = createBubbleChartData(parsedData);
+    setBubbleChartData(dataArray);
 
     return parsedData;
   };
@@ -318,6 +323,35 @@ function App() {
     },
   ];
 
+  const createBubbleChartData = (parsedData) => {
+    const sentimentCounts = {};
+
+    parsedData.forEach((item) => {
+      item.occurredKeys.forEach((key) => {
+        if (!sentimentCounts[key]) {
+          sentimentCounts[key] = {
+            label: key,
+            value: 0,
+            positive_sentiment_percentage: 0,
+            negative_sentiment_percentage: 0,
+          };
+        }
+        sentimentCounts[key].value += 1;
+        sentimentCounts[key].positive_sentiment_percentage +=
+          item.positive_sentiment_percentage;
+        sentimentCounts[key].negative_sentiment_percentage +=
+          item.negative_sentiment_percentage;
+      });
+    });
+
+    Object.values(sentimentCounts).forEach((item) => {
+      item.positive_sentiment_percentage /= item.value;
+      item.negative_sentiment_percentage /= item.value;
+    });
+
+    return Object.values(sentimentCounts);
+  };
+
   return (
     <StyledFullHeightContainer className="App" style={{ display: "flex" }}>
       <StyledNewsContainer style={{ width: "460px" }}>
@@ -331,10 +365,10 @@ function App() {
           <p>Loading data...</p>
         )}
       </StyledNewsContainer>
-      {console.log("entities", data)}
+      {console.log("entities", bubbleChartData)}
       {entities && (
         <div>
-          <BubbleChart data={dataArray} width={800} height={600} />
+          <BubbleChart data={bubbleChartData} width={800} height={600} />
         </div>
       )}
       <div>
