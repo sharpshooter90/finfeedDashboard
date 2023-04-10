@@ -7,3 +7,7 @@ body {
   font-family: sans-serif;
   font-family: "DM Sans", sans-serif;
 }
+
+.isTextOccuranceHighlightEnabled .text-occurrence-highlight {
+  background: yellow;
+}

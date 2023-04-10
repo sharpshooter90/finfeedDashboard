@@ -6,6 +6,7 @@ import Card from "@mui/joy/Card";
 import Chip from "@mui/joy/Chip";
 import Divider from "@mui/joy/Divider";
 import Stack from "@mui/joy/Stack";
+import Switch from "@mui/joy/Switch";
 import Typography from "@mui/joy/Typography";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -106,13 +107,19 @@ function Sentiment({ pos, neg }) {
   return <React.Fragment>{sentiment}</React.Fragment>;
 }
 
+function highlightOccurrence(newsTitle, occurredKeys) {
+  if (!occurredKeys.length) {
+    // no occurred keys, return original newsTitle
+    return newsTitle;
+  }
+  const regex = new RegExp(`(${occurredKeys.join("|")})`, "gi");
+  return newsTitle.replace(
+    regex,
+    '<span class="text-occurrence-highlight">$1</span>'
+  );
+}
+
 const NewsItem = ({ newsItem, index }) => {
-  const [isOccurredWordsVisible, setIsOccurredWordsVisible] = useState(false);
-
-  const toggleOccurredWordsVisibility = () => {
-    setIsOccurredWordsVisible(!isOccurredWordsVisible);
-  };
-
   return (
     <Box sx={{ mb: 2 }}>
       <Card
@@ -131,21 +138,37 @@ const NewsItem = ({ newsItem, index }) => {
         })}
       >
         <Typography level="h2" sx={{ fontSize: "md" }} mb={0.5}>
-          {newsItem.newsTitle}
+          <div
+            dangerouslySetInnerHTML={{
+              __html: highlightOccurrence(
+                newsItem.newsTitle,
+                newsItem.occurredKeys
+              ),
+            }}
+          />
         </Typography>
         <Typography level="body2">
           <Moment format="MMM Do YYYY h:mm a" date={newsItem?.timestamp} />
         </Typography>
         <Box sx={{ display: "flex" }}>
-          <Typography level="body2" onClick={toggleOccurredWordsVisibility}>
-            Word occurrence: {newsItem.totalCount}
-          </Typography>
+          {newsItem?.occurredKeys?.map((item) => {
+            return (
+              <Chip
+                variant="outlined"
+                color="primary"
+                size="sm"
+                sx={{ pointerEvents: "none" }}
+              >
+                <Typography
+                  level="body3"
+                  sx={{ fontWeight: "md", color: "text.secondary" }}
+                >
+                  {item}
+                </Typography>
+              </Chip>
+            );
+          })}
         </Box>
-        {isOccurredWordsVisible && (
-          <Typography level="body2">
-            Occurred words: {newsItem.occurredKeys.join(", ")}
-          </Typography>
-        )}
 
         <Stack direction="row" spacing={2}>
           <Sentiment
@@ -158,12 +181,21 @@ const NewsItem = ({ newsItem, index }) => {
   );
 };
 
+const toggleHighlight = (highlightTextChecked) => {
+  if (highlightTextChecked) {
+    document.body.classList.add("isTextOccuranceHighlightEnabled");
+  } else {
+    document.body.classList.remove("isTextOccuranceHighlightEnabled");
+  }
+};
+
 function App() {
   const [data, setData] = useState(null);
   const [entities, setEntities] = useState(null);
   const [sentimentData, setsentimentData] = useState(null);
   const [bubbleChartData, setBubbleChartData] = useState(null);
   const [selectedSource, setSelectedSource] = useState("WSJ");
+  const [highlightTextChecked, setHighlightTextChecked] = React.useState(false);
 
   useEffect(() => {
     fetchData();
@@ -294,6 +326,11 @@ function App() {
     return Object.values(sentimentCounts);
   };
 
+  const handleSwitchChange = (event) => {
+    setHighlightTextChecked(event.target.checked);
+    toggleHighlight(event.target.checked);
+  };
+
   return (
     <StyledFullHeightContainer className="App" style={{ display: "flex" }}>
       <StyledNewsContainer style={{ width: "460px" }}>
@@ -302,6 +339,19 @@ function App() {
           <option value="CNBC">CNBC</option>
           <option value="Polygon">Polygon</option>
         </select>
+        <Typography
+          component="label"
+          endDecorator={
+            <Switch
+              checked={highlightTextChecked}
+              onChange={handleSwitchChange}
+              sx={{ ml: 1 }}
+            />
+          }
+        >
+          Highlight Word Occurances
+        </Typography>
+
         {data ? (
           <div>
             {data?.map((newsItem, index) => {
