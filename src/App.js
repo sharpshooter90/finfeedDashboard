@@ -9,10 +9,12 @@ import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import Moment from "react-moment";
 import styled from "styled-components";
 
 import BubbleChart from "./components/EntitiesBubbleChart";
 import SentimentPieChart from "./components/SentimentPieChart";
+import "./styles.css";
 
 import { countOccurrences } from "./utils";
 
@@ -120,6 +122,7 @@ const NewsItem = ({ newsItem, index }) => {
           flexDirection: "column",
           gap: "16px",
           padding: "16px",
+          cursor: "pointer",
           transition: "transform 0.3s, border 0.3s",
           "&:hover": {
             borderColor: theme.vars.palette.primary.outlinedHoverBorder,
@@ -130,7 +133,9 @@ const NewsItem = ({ newsItem, index }) => {
         <Typography level="h2" sx={{ fontSize: "md" }} mb={0.5}>
           {newsItem.newsTitle}
         </Typography>
-        <Typography level="body2">{newsItem.timestamp}</Typography>
+        <Typography level="body2">
+          <Moment format="MMM Do YYYY h:mm a" date={newsItem?.timestamp} />
+        </Typography>
         <Box sx={{ display: "flex" }}>
           <Typography level="body2" onClick={toggleOccurredWordsVisibility}>
             Word occurrence: {newsItem.totalCount}
