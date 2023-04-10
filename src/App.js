@@ -158,6 +158,7 @@ function App() {
   const [entities, setEntities] = useState(null);
   const [sentimentData, setsentimentData] = useState(null);
   const [bubbleChartData, setBubbleChartData] = useState(null);
+  const [selectedSource, setSelectedSource] = useState("WSJ");
 
   useEffect(() => {
     fetchData();
@@ -238,11 +239,16 @@ function App() {
     return parsedData;
   };
 
-  const fetchData = async () => {
+  const handleSourceChange = (e) => {
+    setSelectedSource(e.target.value);
+    fetchData(e.target.value);
+  };
+
+  const fetchData = async (source = "WSJ") => {
+    const apiUrl = `https://biz-api.text-miner.com/finfeed/${source.toLowerCase()}/all`;
+
     try {
-      const response = await fetch(
-        "https://biz-api.text-miner.com/finfeed/polygon/all"
-      );
+      const response = await fetch(apiUrl);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -253,75 +259,6 @@ function App() {
       console.error("Error fetching data:", error);
     }
   };
-
-  const dataArray = [
-    {
-      label: "Dividend Income",
-      value: 1,
-      positive_sentiment_percentage: "100",
-      negative_sentiment_percentage: "0",
-    },
-    {
-      label: "Silicon Valley Bank's",
-      value: 1,
-      positive_sentiment_percentage: "100",
-      negative_sentiment_percentage: "0",
-    },
-    {
-      label: "Bank Stocks Worth Buying",
-      value: 1,
-      positive_sentiment_percentage: "100",
-      negative_sentiment_percentage: "0",
-    },
-    {
-      label: "Bank 'Could Be Next Shoe",
-      value: 1,
-      positive_sentiment_percentage: "100",
-      negative_sentiment_percentage: "0",
-    },
-    {
-      label: "Talking Banks and",
-      value: 1,
-      positive_sentiment_percentage: "100",
-      negative_sentiment_percentage: "0",
-    },
-    {
-      label: "First Republic Bank Stock",
-      value: 1,
-      positive_sentiment_percentage: "100",
-      negative_sentiment_percentage: "0",
-    },
-    {
-      label: "Liquid Media Group Ltd.",
-      value: 4,
-      positive_sentiment_percentage: "0",
-      negative_sentiment_percentage: "100",
-    },
-    {
-      label: "Millennium Group International Holdings Limited",
-      value: 1,
-      positive_sentiment_percentage: "100",
-      negative_sentiment_percentage: "0",
-    },
-    {
-      label: "Texas Capital Bancshares, Inc.",
-      value: 1,
-      positive_sentiment_percentage: "100",
-      negative_sentiment_percentage: "0",
-    },
-    {
-      label: "Kentucky First Federal Bancorp Announces Payment",
-      value: 1,
-      positive_sentiment_percentage: "100",
-      negative_sentiment_percentage: "0",
-    },
-    {
-      label: "Honeywell International Inc.",
-      value: 1,
-      positive_sentiment_percentage: "100",
-      negative_sentiment_percentage: "0",
-    },
-  ];
 
   const createBubbleChartData = (parsedData) => {
     const sentimentCounts = {};
@@ -355,6 +292,11 @@ function App() {
   return (
     <StyledFullHeightContainer className="App" style={{ display: "flex" }}>
       <StyledNewsContainer style={{ width: "460px" }}>
+        <select value={selectedSource} onChange={handleSourceChange}>
+          <option value="WSJ">WSJ</option>
+          <option value="CNBC">CNBC</option>
+          <option value="Polygon">Polygon</option>
+        </select>
         {data ? (
           <div>
             {data?.map((newsItem, index) => {
