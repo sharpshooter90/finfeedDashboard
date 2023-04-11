@@ -47,10 +47,8 @@ const BubbleChart = ({ data, width, height }) => {
       { color: "#E74C3C", label: "Negative" },
     ];
 
-    const legend = svg
-      .append("g")
-      .attr("class", "legend")
-      .attr("transform", `translate(${width / 2 - 60},${height + 20})`);
+    const legend = svg.append("g").attr("class", "legend");
+    // .attr("transform", `translate(${width / 2 - 60},${height + 20})`);
 
     const legendItems = legend
       .selectAll(".legend-item")
@@ -71,6 +69,40 @@ const BubbleChart = ({ data, width, height }) => {
       .attr("x", 20)
       .attr("y", 12)
       .text((d) => d.label);
+  };
+
+  const drawLabelLegend = (svg, data) => {
+    const labelCounts = data.reduce((acc, item) => {
+      acc[item.label] = (acc[item.label] || 0) + 1;
+      return acc;
+    }, {});
+
+    const labels = Object.entries(labelCounts).map(([label, count]) => ({
+      label,
+      count,
+    }));
+
+    const xOffset = 10;
+    const yOffset = height + 60;
+
+    const labelLegend = svg
+      .append("g")
+      .attr("class", "label-legend")
+      .attr("transform", `translate(${xOffset},${yOffset})`);
+
+    const labelItems = labelLegend
+      .selectAll(".label-item")
+      .data(labels)
+      .enter()
+      .append("g")
+      .attr("class", "label-item")
+      .attr("transform", (d, i) => `translate(0, ${i * 20})`);
+
+    labelItems
+      .append("text")
+      .attr("x", 0)
+      .attr("y", 0)
+      .text((d) => `${d.label} (${d.count})`);
   };
 
   const drawBubbleChart = (svg, root, tooltip) => {
@@ -114,7 +146,7 @@ const BubbleChart = ({ data, width, height }) => {
     const svg = d3
       .select(chartRef.current)
       .attr("width", width)
-      .attr("height", height + 50); // Increase height to accommodate the legend
+      .attr("height", height + 460); // Increase height to accommodate the label legends
 
     svg.selectAll("*").remove();
 
@@ -130,6 +162,7 @@ const BubbleChart = ({ data, width, height }) => {
     const tooltip = createTooltip();
     drawBubbleChart(svg, root, tooltip);
     drawLegend(svg);
+    drawLabelLegend(svg, data);
   };
 
   return <svg ref={chartRef} />;

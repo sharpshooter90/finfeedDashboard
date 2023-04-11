@@ -315,10 +315,11 @@ function App(props) {
   };
 
   const handleFetchButtonClick = () => {
-    fetchData("WSJ", newsKeywordSearchInput);
+    fetchData(newsKeywordSearchInput, "all");
   };
 
   const fetchData = async (source = "WSJ", keyword = "all") => {
+    setGlobalLoading(true);
     console.log("Fetching", source, keyword);
     const apiUrl = `https://biz-api.text-miner.com/finfeed/${source.toLowerCase()}/${keyword.toLowerCase()}`;
 
