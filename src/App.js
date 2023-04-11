@@ -315,7 +315,7 @@ function App(props) {
   };
 
   const handleFetchButtonClick = () => {
-    fetchData(newsKeywordSearchInput, "all");
+    fetchData(selectedSource, newsKeywordSearchInput);
   };
 
   const fetchData = async (source = "WSJ", keyword = "all") => {
