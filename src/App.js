@@ -1,6 +1,10 @@
 import BubbleChartIcon from "@mui/icons-material/BubbleChart";
 import DonutLargeIcon from "@mui/icons-material/DonutLarge";
 import FeedIcon from "@mui/icons-material/Feed";
+import MenuIcon from "@mui/icons-material/Menu";
+import Drawer from "@mui/material/Drawer";
+import IconButton from "@mui/material/IconButton";
+
 import MoodIcon from "@mui/icons-material/Mood";
 import MoodBadIcon from "@mui/icons-material/MoodBad";
 import SentimentNeutralOutlinedIcon from "@mui/icons-material/SentimentNeutralOutlined";
@@ -205,7 +209,7 @@ const toggleHighlight = (highlightTextChecked) => {
   }
 };
 
-function App() {
+function App(props) {
   const [globalLoading, setGlobalLoading] = useState(true);
   const [data, setData] = useState(null);
   const [entities, setEntities] = useState(null);
@@ -372,15 +376,91 @@ function App() {
     toggleHighlight(event.target.checked);
   };
 
+  const drawerWidth = 240;
+  const { window } = props;
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+
+  const handleDrawerToggle = () => {
+    console.log("drawer toggle");
+    setMobileOpen((prevState) => !prevState);
+  };
+
+  const container =
+    window !== undefined ? () => window().document.body : undefined;
+  const drawer = (
+    <Box sx={{ textAlign: "center" }}>
+      <Typography variant="h6" sx={{ my: 2 }}>
+        FinFeeds
+      </Typography>
+      <Divider />
+      <Box
+        sx={{
+          display: { xs: "flex", sm: "nome" },
+          flexDirection: "column",
+        }}
+        gap={2}
+        p={2}
+      >
+        <FormControl>
+          <InputLabel variant="standard" htmlFor="uncontrolled-native">
+            Source
+          </InputLabel>
+          <NativeSelect value={selectedSource} onChange={handleSourceChange}>
+            <option value="WSJ">WSJ</option>
+            <option value="CNBC">CNBC</option>
+            <option value="Polygon">Polygon</option>
+          </NativeSelect>
+        </FormControl>
+        <TextField
+          id="outlined-basic"
+          label="Search Keywords"
+          variant="outlined"
+          value={newsKeywordSearchInput}
+          onChange={handleKeywordChange}
+          placeholder="Enter keyword"
+          size="small"
+        />
+        <Button
+          variant="contained"
+          size="small"
+          onClick={handleFetchButtonClick}
+        >
+          Fetch News
+        </Button>
+        <Typography
+          component="label"
+          endDecorator={
+            <Switch
+              checked={highlightTextChecked}
+              onChange={handleSwitchChange}
+              sx={{ ml: 1 }}
+            />
+          }
+        >
+          Highlight Word Occurances
+        </Typography>
+      </Box>
+    </Box>
+  );
+
   if (isMobile) {
     return (
       <Fragment>
         <AppBar component="nav">
           <Toolbar sx={{ background: "#fff" }}>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 2, display: { sm: "none" }, fill: "black" }}
+            >
+              <MenuIcon sx={{ fill: "black" }} />
+            </IconButton>
             <Typography
               variant="h6"
               component="div"
-              sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+              sx={{ flexGrow: 1, display: { sm: "block" } }}
             >
               FinFeeds
             </Typography>
@@ -435,34 +515,60 @@ function App() {
               </Typography>
             </Box>
           </Toolbar>
-        </AppBar>
-        {tabValue === 0 && (
-          <div>
-            {data ? (
-              <div>
-                {data?.map((newsItem, index) => {
-                  return <NewsItem newsItem={newsItem} index={index} />;
-                })}
-              </div>
-            ) : (
-              <p>Loading data...</p>
-            )}
-          </div>
-        )}
-        {tabValue === 1 && (
-          <div>
-            {entities && (
-              <div>
-                <BubbleChart data={bubbleChartData} width={300} height={300} />
-              </div>
-            )}
-          </div>
-        )}
-        {tabValue === 2 && (
-          <Box m={1} p={2}>
-            <SentimentPieChart sentimentData={sentimentData} />
+          <Box component="nav">
+            <Drawer
+              container={container}
+              variant="temporary"
+              open={mobileOpen}
+              onClose={handleDrawerToggle}
+              ModalProps={{
+                keepMounted: true, // Better open performance on mobile.
+              }}
+              sx={{
+                display: { xs: "block", sm: "none" },
+                "& .MuiDrawer-paper": {
+                  boxSizing: "border-box",
+                  width: drawerWidth,
+                },
+              }}
+            >
+              {drawer}
+            </Drawer>
           </Box>
-        )}
+        </AppBar>
+        <Box mt={8} p={2}>
+          {tabValue === 0 && (
+            <div>
+              {data ? (
+                <div>
+                  {data?.map((newsItem, index) => {
+                    return <NewsItem newsItem={newsItem} index={index} />;
+                  })}
+                </div>
+              ) : (
+                <p>Loading data...</p>
+              )}
+            </div>
+          )}
+          {tabValue === 1 && (
+            <div>
+              {entities && (
+                <div>
+                  <BubbleChart
+                    data={bubbleChartData}
+                    width={300}
+                    height={300}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+          {tabValue === 2 && (
+            <Box m={1} p={2}>
+              <SentimentPieChart sentimentData={sentimentData} />
+            </Box>
+          )}
+        </Box>
 
         <Paper
           sx={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 1000 }}
