@@ -443,6 +443,40 @@ function App(props) {
     </Box>
   );
 
+  function renderNewsItems() {
+    if (globalLoading) {
+      return <LinearProgress />;
+    } else if (noData === false) {
+      return <EmptyState />;
+    } else {
+      return (
+        <Stack direction="row" spacing={2} pt={2}>
+          <StyledNewsContainer style={{ width: "460px" }}>
+            {data && (
+              <div>
+                {data?.length === 0 ? (
+                  <p>Nothing found</p>
+                ) : (
+                  data?.map((newsItem, index) => {
+                    return <NewsItem newsItem={newsItem} index={index} />;
+                  })
+                )}
+              </div>
+            )}
+          </StyledNewsContainer>{" "}
+          {entities && (
+            <div>
+              <BubbleChart data={bubbleChartData} width={800} height={600} />
+            </div>
+          )}
+          <div>
+            <SentimentPieChart sentimentData={sentimentData} />
+          </div>
+        </Stack>
+      );
+    }
+  }
+
   if (isMobile) {
     return (
       <Fragment>
@@ -588,40 +622,6 @@ function App(props) {
         </Paper>
       </Fragment>
     );
-  }
-
-  function renderNewsItems() {
-    if (globalLoading) {
-      return <LinearProgress />;
-    } else if (noData === false) {
-      return <EmptyState />;
-    } else {
-      return (
-        <Stack direction="row" spacing={2} pt={2}>
-          <StyledNewsContainer style={{ width: "460px" }}>
-            {data && (
-              <div>
-                {data?.length === 0 ? (
-                  <p>Nothing found</p>
-                ) : (
-                  data?.map((newsItem, index) => {
-                    return <NewsItem newsItem={newsItem} index={index} />;
-                  })
-                )}
-              </div>
-            )}
-          </StyledNewsContainer>{" "}
-          {entities && (
-            <div>
-              <BubbleChart data={bubbleChartData} width={800} height={600} />
-            </div>
-          )}
-          <div>
-            <SentimentPieChart sentimentData={sentimentData} />
-          </div>
-        </Stack>
-      );
-    }
   }
 
   return (
