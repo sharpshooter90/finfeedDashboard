@@ -24,7 +24,7 @@ import TextField from "@mui/material/TextField";
 import Toolbar from "@mui/material/Toolbar";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Moment from "react-moment";
 import styled from "styled-components";
 
@@ -303,7 +303,7 @@ function App() {
 
   const handleSourceChange = (e) => {
     setSelectedSource(e.target.value);
-    fetchData(e.target.value);
+    fetchData(e.target.value, "all");
   };
 
   const handleKeywordChange = (event) => {
@@ -374,24 +374,68 @@ function App() {
 
   if (isMobile) {
     return (
-      <div>
-        <select value={selectedSource} onChange={handleSourceChange}>
-          <option value="WSJ">WSJ</option>
-          <option value="CNBC">CNBC</option>
-          <option value="Polygon">Polygon</option>
-        </select>
-        <Typography
-          component="label"
-          endDecorator={
-            <Switch
-              checked={highlightTextChecked}
-              onChange={handleSwitchChange}
-              sx={{ ml: 1 }}
-            />
-          }
-        >
-          Highlight Word Occurances
-        </Typography>
+      <Fragment>
+        <AppBar component="nav">
+          <Toolbar sx={{ background: "#fff" }}>
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+            >
+              FinFeeds
+            </Typography>
+            <Box
+              sx={{
+                display: { xs: "none", sm: "flex" },
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              gap={2}
+            >
+              <FormControl>
+                <InputLabel variant="standard" htmlFor="uncontrolled-native">
+                  Source
+                </InputLabel>
+                <NativeSelect
+                  value={selectedSource}
+                  onChange={handleSourceChange}
+                >
+                  <option value="WSJ">WSJ</option>
+                  <option value="CNBC">CNBC</option>
+                  <option value="Polygon">Polygon</option>
+                </NativeSelect>
+              </FormControl>
+              <TextField
+                id="outlined-basic"
+                label="Search Keywords"
+                variant="outlined"
+                value={newsKeywordSearchInput}
+                onChange={handleKeywordChange}
+                placeholder="Enter keyword"
+                size="small"
+              />
+              <Button
+                variant="contained"
+                size="small"
+                onClick={handleFetchButtonClick}
+              >
+                Fetch News
+              </Button>
+              <Typography
+                component="label"
+                endDecorator={
+                  <Switch
+                    checked={highlightTextChecked}
+                    onChange={handleSwitchChange}
+                    sx={{ ml: 1 }}
+                  />
+                }
+              >
+                Highlight Word Occurances
+              </Typography>
+            </Box>
+          </Toolbar>
+        </AppBar>
         {tabValue === 0 && (
           <div>
             {data ? (
@@ -436,7 +480,7 @@ function App() {
             />
           </BottomNavigation>
         </Paper>
-      </div>
+      </Fragment>
     );
   }
 
@@ -508,7 +552,7 @@ function App() {
             </FormControl>
             <TextField
               id="outlined-basic"
-              label="Outlined"
+              label="Search Keywords"
               variant="outlined"
               value={newsKeywordSearchInput}
               onChange={handleKeywordChange}
