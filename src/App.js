@@ -20,6 +20,7 @@ import React, { useEffect, useState } from "react";
 import Moment from "react-moment";
 import styled from "styled-components";
 
+import EmptyState from "./components/EmptyState";
 import BubbleChart from "./components/EntitiesBubbleChart";
 import SentimentPieChart from "./components/SentimentPieChart";
 import "./styles.css";
@@ -197,6 +198,7 @@ const toggleHighlight = (highlightTextChecked) => {
 };
 
 function App() {
+  const [globalLoading, setGlobalLoading] = useState(true);
   const [data, setData] = useState(null);
   const [entities, setEntities] = useState(null);
   const [sentimentData, setsentimentData] = useState(null);
@@ -204,6 +206,8 @@ function App() {
   const [selectedSource, setSelectedSource] = useState("WSJ");
   const [highlightTextChecked, setHighlightTextChecked] = React.useState(false);
   const [tabValue, setTabValue] = useState(0);
+  const [newsKeywordSearchInput, setNewsKeywordSearchInput] = useState("all");
+  const [noData, setNoData] = useState(true);
 
   const isMobile = useMediaQuery("(max-width: 600px)");
   const handleChange = (event, newValue) => {
@@ -294,8 +298,17 @@ function App() {
     fetchData(e.target.value);
   };
 
-  const fetchData = async (source = "WSJ") => {
-    const apiUrl = `https://biz-api.text-miner.com/finfeed/${source.toLowerCase()}/all`;
+  const handleKeywordChange = (event) => {
+    setNewsKeywordSearchInput(event.target.value);
+  };
+
+  const handleFetchButtonClick = () => {
+    fetchData("WSJ", newsKeywordSearchInput);
+  };
+
+  const fetchData = async (source = "WSJ", keyword = "all") => {
+    console.log("Fetching", source, keyword);
+    const apiUrl = `https://biz-api.text-miner.com/finfeed/${source.toLowerCase()}/${keyword.toLowerCase()}`;
 
     try {
       const response = await fetch(apiUrl);
@@ -305,6 +318,13 @@ function App() {
       const responseJSON = await response.json();
       const parsedData = await parseNewsData(responseJSON);
       setData(parsedData);
+      console.log("parsed Data", parsedData);
+      if (parsedData.length === 0) {
+        setNoData(false);
+      } else if (parsedData.length > 0) {
+        setNoData(true);
+      }
+      setGlobalLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -412,46 +432,67 @@ function App() {
     );
   }
 
-  return (
-    <StyledFullHeightContainer className="App" style={{ display: "flex" }}>
-      <StyledNewsContainer style={{ width: "460px" }}>
-        <select value={selectedSource} onChange={handleSourceChange}>
-          <option value="WSJ">WSJ</option>
-          <option value="CNBC">CNBC</option>
-          <option value="Polygon">Polygon</option>
-        </select>
-        <Typography
-          component="label"
-          endDecorator={
-            <Switch
-              checked={highlightTextChecked}
-              onChange={handleSwitchChange}
-              sx={{ ml: 1 }}
-            />
-          }
-        >
-          Highlight Word Occurances
-        </Typography>
-
-        {data ? (
+  function renderNewsItems() {
+    if (globalLoading) {
+      return <p>Loading data...</p>;
+    } else if (noData === false) {
+      return <EmptyState />;
+    } else {
+      return (
+        <Stack direction="row" spacing={2}>
+          <StyledNewsContainer style={{ width: "460px" }}>
+            {data && (
+              <div>
+                {data?.length === 0 ? (
+                  <p>Nothing found</p>
+                ) : (
+                  data?.map((newsItem, index) => {
+                    return <NewsItem newsItem={newsItem} index={index} />;
+                  })
+                )}
+              </div>
+            )}
+          </StyledNewsContainer>{" "}
+          {entities && (
+            <div>
+              <BubbleChart data={bubbleChartData} width={800} height={600} />
+            </div>
+          )}
           <div>
-            {data?.map((newsItem, index) => {
-              return <NewsItem newsItem={newsItem} index={index} />;
-            })}
+            <SentimentPieChart sentimentData={sentimentData} />
           </div>
-        ) : (
-          <p>Loading data...</p>
-        )}
-      </StyledNewsContainer>
-      {console.log("entities", bubbleChartData)}
-      {entities && (
-        <div>
-          <BubbleChart data={bubbleChartData} width={800} height={600} />
-        </div>
-      )}
-      <div>
-        <SentimentPieChart sentimentData={sentimentData} />
-      </div>
+        </Stack>
+      );
+    }
+  }
+
+  return (
+    <StyledFullHeightContainer className="App">
+      <select value={selectedSource} onChange={handleSourceChange}>
+        <option value="WSJ">WSJ</option>
+        <option value="CNBC">CNBC</option>
+        <option value="Polygon">Polygon</option>
+      </select>
+      <input
+        type="text"
+        value={newsKeywordSearchInput}
+        onChange={handleKeywordChange}
+        placeholder="Enter keyword"
+      />
+      <button onClick={handleFetchButtonClick}>Fetch News</button>
+      <Typography
+        component="label"
+        endDecorator={
+          <Switch
+            checked={highlightTextChecked}
+            onChange={handleSwitchChange}
+            sx={{ ml: 1 }}
+          />
+        }
+      >
+        Highlight Word Occurances
+      </Typography>
+      {renderNewsItems()}
     </StyledFullHeightContainer>
   );
 }
