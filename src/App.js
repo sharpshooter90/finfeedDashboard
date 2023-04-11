@@ -226,7 +226,7 @@ function App(props) {
   const [newsKeywordSearchInput, setNewsKeywordSearchInput] = useState("all");
   const [noData, setNoData] = useState(true);
 
-  const isMobile = useMediaQuery("(max-width: 600px)");
+  const isMobile = useMediaQuery("(max-width: 1080px)");
   const handleChange = (event, newValue) => {
     setTabValue(newValue);
   };
