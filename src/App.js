@@ -151,13 +151,18 @@ const NewsItem = ({ newsItem, index }) => {
           padding: "16px",
           cursor: "pointer",
           transition: "transform 0.3s, border 0.3s",
+          overflow: "hidden",
           "&:hover": {
             borderColor: theme.vars.palette.primary.outlinedHoverBorder,
             transform: "translateY(-2px)",
           },
         })}
       >
-        <Typography level="h2" sx={{ fontSize: "md" }} mb={0.5}>
+        <Typography
+          level="h2"
+          sx={{ fontSize: "md", overflowX: "scroll" }}
+          mb={0.5}
+        >
           <div
             dangerouslySetInnerHTML={{
               __html: highlightOccurrence(
