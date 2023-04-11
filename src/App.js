@@ -11,9 +11,17 @@ import Divider from "@mui/joy/Divider";
 import Stack from "@mui/joy/Stack";
 import Switch from "@mui/joy/Switch";
 import Typography from "@mui/joy/Typography";
+import AppBar from "@mui/material/AppBar";
 import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
+import Button from "@mui/material/Button";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import LinearProgress from "@mui/material/LinearProgress";
+import NativeSelect from "@mui/material/NativeSelect";
 import Paper from "@mui/material/Paper";
+import TextField from "@mui/material/TextField";
+import Toolbar from "@mui/material/Toolbar";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -434,12 +442,12 @@ function App() {
 
   function renderNewsItems() {
     if (globalLoading) {
-      return <p>Loading data...</p>;
+      return <LinearProgress />;
     } else if (noData === false) {
       return <EmptyState />;
     } else {
       return (
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={2} pt={2}>
           <StyledNewsContainer style={{ width: "460px" }}>
             {data && (
               <div>
@@ -468,31 +476,68 @@ function App() {
 
   return (
     <StyledFullHeightContainer className="App">
-      <select value={selectedSource} onChange={handleSourceChange}>
-        <option value="WSJ">WSJ</option>
-        <option value="CNBC">CNBC</option>
-        <option value="Polygon">Polygon</option>
-      </select>
-      <input
-        type="text"
-        value={newsKeywordSearchInput}
-        onChange={handleKeywordChange}
-        placeholder="Enter keyword"
-      />
-      <button onClick={handleFetchButtonClick}>Fetch News</button>
-      <Typography
-        component="label"
-        endDecorator={
-          <Switch
-            checked={highlightTextChecked}
-            onChange={handleSwitchChange}
-            sx={{ ml: 1 }}
-          />
-        }
-      >
-        Highlight Word Occurances
-      </Typography>
-      {renderNewsItems()}
+      <AppBar component="nav">
+        <Toolbar sx={{ background: "#fff" }}>
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+          >
+            FinFeeds
+          </Typography>
+          <Box
+            sx={{
+              display: { xs: "none", sm: "flex" },
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            gap={2}
+          >
+            <FormControl>
+              <InputLabel variant="standard" htmlFor="uncontrolled-native">
+                Source
+              </InputLabel>
+              <NativeSelect
+                value={selectedSource}
+                onChange={handleSourceChange}
+              >
+                <option value="WSJ">WSJ</option>
+                <option value="CNBC">CNBC</option>
+                <option value="Polygon">Polygon</option>
+              </NativeSelect>
+            </FormControl>
+            <TextField
+              id="outlined-basic"
+              label="Outlined"
+              variant="outlined"
+              value={newsKeywordSearchInput}
+              onChange={handleKeywordChange}
+              placeholder="Enter keyword"
+              size="small"
+            />
+            <Button
+              variant="contained"
+              size="small"
+              onClick={handleFetchButtonClick}
+            >
+              Fetch News
+            </Button>
+            <Typography
+              component="label"
+              endDecorator={
+                <Switch
+                  checked={highlightTextChecked}
+                  onChange={handleSwitchChange}
+                  sx={{ ml: 1 }}
+                />
+              }
+            >
+              Highlight Word Occurances
+            </Typography>
+          </Box>
+        </Toolbar>
+      </AppBar>
+      <Box mt={8}>{renderNewsItems()}</Box>
     </StyledFullHeightContainer>
   );
 }
