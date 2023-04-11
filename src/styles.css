@@ -6,6 +6,7 @@ body {
 .App {
   font-family: sans-serif;
   font-family: "DM Sans", sans-serif;
+  overflow: hidden;
 }
 
 .isTextOccuranceHighlightEnabled .text-occurrence-highlight {

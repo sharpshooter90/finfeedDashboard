@@ -471,7 +471,7 @@ function App(props) {
             )}
           </StyledNewsContainer>{" "}
           {entities && (
-            <div>
+            <div style={{ overflow: "scroll" }}>
               <BubbleChart data={bubbleChartData} width={800} height={600} />
             </div>
           )}

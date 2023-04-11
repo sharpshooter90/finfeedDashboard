@@ -146,7 +146,7 @@ const BubbleChart = ({ data, width, height }) => {
     const svg = d3
       .select(chartRef.current)
       .attr("width", width)
-      .attr("height", height + 460); // Increase height to accommodate the label legends
+      .attr("height", height + 1060); // Increase height to accommodate the label legends
 
     svg.selectAll("*").remove();
 
