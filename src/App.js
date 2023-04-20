@@ -2,12 +2,6 @@ import BubbleChartIcon from "@mui/icons-material/BubbleChart";
 import DonutLargeIcon from "@mui/icons-material/DonutLarge";
 import FeedIcon from "@mui/icons-material/Feed";
 import MenuIcon from "@mui/icons-material/Menu";
-import Drawer from "@mui/material/Drawer";
-import IconButton from "@mui/material/IconButton";
-
-import MoodIcon from "@mui/icons-material/Mood";
-import MoodBadIcon from "@mui/icons-material/MoodBad";
-import SentimentNeutralOutlinedIcon from "@mui/icons-material/SentimentNeutralOutlined";
 import Box from "@mui/joy/Box";
 import Card from "@mui/joy/Card";
 import Chip from "@mui/joy/Chip";
@@ -19,7 +13,9 @@ import AppBar from "@mui/material/AppBar";
 import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
 import Button from "@mui/material/Button";
+import Drawer from "@mui/material/Drawer";
 import FormControl from "@mui/material/FormControl";
+import IconButton from "@mui/material/IconButton";
 import InputLabel from "@mui/material/InputLabel";
 import LinearProgress from "@mui/material/LinearProgress";
 import NativeSelect from "@mui/material/NativeSelect";
@@ -34,8 +30,10 @@ import styled from "styled-components";
 
 import EmptyState from "./components/EmptyState";
 import BubbleChart from "./components/EntitiesBubbleChart";
+import Sentiment from "./components/Sentiment";
 import SentimentPieChart from "./components/SentimentPieChart";
 import "./styles.css";
+import { getSentiment, getSentimentStyle } from "./utils";
 
 import { countOccurrences } from "./utils";
 
@@ -48,84 +46,6 @@ const StyledNewsContainer = styled.div`
   overflow-y: scroll;
   padding-right: 48px;
 `;
-
-function Sentiment({ pos, neg }) {
-  let sentiment;
-  if (pos > 0 || neg > 0) {
-    sentiment = (
-      <React.Fragment>
-        <Chip
-          variant="outlined"
-          color="primary"
-          size="sm"
-          sx={{ pointerEvents: "none" }}
-          startDecorator={
-            <MoodIcon
-              fontSize="small"
-              sx={{ color: pos === 0 ? "lightgrey" : "green" }}
-            />
-          }
-          disabled={pos === 0}
-        >
-          <Typography
-            level="body3"
-            sx={{ fontWeight: "md", color: "text.secondary" }}
-          >
-            &nbsp;Positive&nbsp;
-            {pos}%
-          </Typography>
-        </Chip>
-
-        <Divider orientation="vertical" />
-
-        <Chip
-          variant="outlined"
-          color="primary"
-          size="sm"
-          sx={{ pointerEvents: "none" }}
-          startDecorator={
-            <MoodBadIcon
-              fontSize="small"
-              sx={{ color: neg === 0 ? "lightgrey" : "crimson" }}
-            />
-          }
-          disabled={neg === 0}
-        >
-          <Typography
-            level="body3"
-            sx={{ fontWeight: "md", color: "text.secondary" }}
-          >
-            &nbsp;Negative&nbsp;{neg}%
-          </Typography>
-        </Chip>
-      </React.Fragment>
-    );
-  } else {
-    sentiment = (
-      <Chip
-        variant="outlined"
-        color="primary"
-        size="sm"
-        sx={{ pointerEvents: "none" }}
-        startDecorator={
-          <SentimentNeutralOutlinedIcon
-            fontSize="small"
-            sx={{ color: "text.primary" }}
-          />
-        }
-      >
-        <Typography
-          level="body3"
-          sx={{ fontWeight: "md", color: "text.primary" }}
-        >
-          &nbsp;Neutral&nbsp;
-        </Typography>
-      </Chip>
-    );
-  }
-
-  return <React.Fragment>{sentiment}</React.Fragment>;
-}
 
 function highlightOccurrence(newsTitle, occurredKeys) {
   if (!occurredKeys.length) {
@@ -145,6 +65,12 @@ const NewsItem = ({ newsItem, index }) => {
       <Card
         variant="outlined"
         sx={(theme) => ({
+          ...getSentimentStyle(
+            getSentiment(
+              newsItem.negative_sentiment_percentage,
+              newsItem.positive_sentiment_percentage
+            )
+          ),
           width: "100%",
           flexDirection: "column",
           gap: "16px",
@@ -218,7 +144,7 @@ function App(props) {
   const [globalLoading, setGlobalLoading] = useState(true);
   const [data, setData] = useState(null);
   const [entities, setEntities] = useState(null);
-  const [sentimentData, setsentimentData] = useState(null);
+  const [sentimentData, setSentimentData] = useState(null);
   const [bubbleChartData, setBubbleChartData] = useState(null);
   const [selectedSource, setSelectedSource] = useState("WSJ");
   const [highlightTextChecked, setHighlightTextChecked] = React.useState(false);
@@ -290,6 +216,8 @@ function App(props) {
       })
     );
 
+    console.log("parsed data", parsedData);
+
     // Calculate the percentages
     const totalNews = parsedData.length;
     const posPercentage = (posCount / totalNews) * 100;
@@ -297,7 +225,7 @@ function App(props) {
     const neuPercentage = (neuCount / totalNews) * 100;
 
     // Set the sentimentData state
-    setsentimentData({
+    setSentimentData({
       positive: posPercentage,
       negative: negPercentage,
       neutral: neuPercentage,
