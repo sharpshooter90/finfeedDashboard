@@ -7,7 +7,6 @@ import Card from "@mui/joy/Card";
 import Chip from "@mui/joy/Chip";
 import Divider from "@mui/joy/Divider";
 import Stack from "@mui/joy/Stack";
-import Switch from "@mui/joy/Switch";
 import Typography from "@mui/joy/Typography";
 import AppBar from "@mui/material/AppBar";
 import BottomNavigation from "@mui/material/BottomNavigation";
@@ -65,7 +64,7 @@ function highlightOccurrence(newsTitle, occurredKeys) {
 
 const NewsItem = ({ newsItem }) => {
   return (
-    <Box sx={{ mb: 2 }}>
+    <Box sx={{ mb: 2, ml: 1 }}>
       <Card
         variant="outlined"
         sx={(theme) => ({
@@ -451,7 +450,7 @@ function App(props) {
         >
           Fetch News
         </Button>
-        <Typography
+        {/* <Typography
           component="label"
           endDecorator={
             <Switch
@@ -462,7 +461,7 @@ function App(props) {
           }
         >
           Highlight Word occurrence
-        </Typography>
+        </Typography> */}
       </Box>
     </Box>
   );
@@ -490,7 +489,7 @@ function App(props) {
           </StyledNewsContainer>{" "}
           {bubbleChartData && (
             <div style={{ overflow: "scroll" }}>
-              <BubbleChart data={bubbleChartData} />
+              <BubbleChart data={bubbleChartData} width={700} height={600} />
             </div>
           )}
           <div>
@@ -559,7 +558,7 @@ function App(props) {
               >
                 Fetch News
               </Button>
-              <Typography
+              {/* <Typography
                 component="label"
                 endDecorator={
                   <Switch
@@ -570,7 +569,7 @@ function App(props) {
                 }
               >
                 Highlight Word occurrence
-              </Typography>
+              </Typography> */}
             </Box>
           </Toolbar>
           <Box component="nav">
@@ -696,7 +695,7 @@ function App(props) {
             >
               Fetch News
             </Button>
-            <Typography
+            {/* <Typography
               component="label"
               endDecorator={
                 <Switch
@@ -707,7 +706,7 @@ function App(props) {
               }
             >
               Highlight Word occurrence
-            </Typography>
+            </Typography> */}
           </Box>
         </Toolbar>
       </AppBar>

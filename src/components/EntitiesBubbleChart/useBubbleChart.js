@@ -3,11 +3,8 @@ import * as d3 from "d3";
 import { useEffect } from "react";
 import "./style.css";
 
-const useBubbleChart = (chartRef, data) => {
+const useBubbleChart = (chartRef, data, width, height) => {
   useEffect(() => {
-    const width = 500;
-    const height = 500;
-
     d3.select(chartRef.current).select("svg").remove();
 
     const svg = d3
