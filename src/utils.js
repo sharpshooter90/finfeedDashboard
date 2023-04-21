@@ -37,3 +37,28 @@ export const getSentimentStyle = (sentiment) => {
       return {};
   }
 };
+
+export const getSentimentWithPercentage = (parsedData) => {
+  const totalCount = parsedData.length;
+  const sentimentCounts = parsedData.reduce(
+    (
+      counts,
+      { positive_sentiment_percentage, negative_sentiment_percentage }
+    ) => {
+      const sentiment = getSentiment(
+        negative_sentiment_percentage,
+        positive_sentiment_percentage
+      );
+      counts[sentiment]++;
+      return counts;
+    },
+    { neutral: 0, negative: 0, positive: 0, mixed: 0 }
+  );
+
+  return {
+    neutral: (sentimentCounts.neutral / totalCount) * 100,
+    negative: (sentimentCounts.negative / totalCount) * 100,
+    positive: (sentimentCounts.positive / totalCount) * 100,
+    mixed: (sentimentCounts.mixed / totalCount) * 100,
+  };
+};

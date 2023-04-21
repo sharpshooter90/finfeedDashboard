@@ -33,7 +33,11 @@ import BubbleChart from "./components/EntitiesBubbleChart";
 import Sentiment from "./components/Sentiment";
 import SentimentPieChart from "./components/SentimentPieChart";
 import "./styles.css";
-import { getSentiment, getSentimentStyle } from "./utils";
+import {
+  getSentiment,
+  getSentimentStyle,
+  getSentimentWithPercentage,
+} from "./utils";
 
 import { countOccurrences } from "./utils";
 
@@ -219,18 +223,8 @@ function App(props) {
 
     console.log("parsed data", parsedData);
 
-    // Calculate the percentages
-    const totalNews = parsedData.length;
-    const posPercentage = (posCount / totalNews) * 100;
-    const negPercentage = (negCount / totalNews) * 100;
-    const neuPercentage = (neuCount / totalNews) * 100;
-
     // Set the sentimentData state
-    setSentimentData({
-      positive: posPercentage,
-      negative: negPercentage,
-      neutral: neuPercentage,
-    });
+    setSentimentData(getSentimentWithPercentage(parsedData));
 
     setBubbleChartData(generateBubbleChartDataSets(rawEntities, parsedData));
 
