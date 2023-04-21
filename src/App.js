@@ -59,7 +59,7 @@ function highlightOccurrence(newsTitle, occurredKeys) {
   );
 }
 
-const NewsItem = ({ newsItem, index }) => {
+const NewsItem = ({ newsItem }) => {
   return (
     <Box sx={{ mb: 2 }}>
       <Card
@@ -150,6 +150,7 @@ function App(props) {
   const [tabValue, setTabValue] = useState(0);
   const [newsKeywordSearchInput, setNewsKeywordSearchInput] = useState("all");
   const [noData, setNoData] = useState(true);
+  const [bubbleChartData, setBubbleChartData] = useState();
 
   const isMobile = useMediaQuery("(max-width: 1080px)");
   const handleChange = (event, newValue) => {
@@ -170,6 +171,7 @@ function App(props) {
     const rawData = response.data;
     setEntities(response.entities);
     const rawEntities = response.entities;
+    console.log("data", rawData);
     const keys = Object.keys(rawEntities);
 
     const parsedData = await Promise.all(
@@ -230,47 +232,136 @@ function App(props) {
       neutral: neuPercentage,
     });
 
+    setBubbleChartData(generateBubbleChartDataSets(rawEntities, parsedData));
+
     return parsedData;
   };
 
-  const bubbleChartDataSets = [
-    {
-      label: "Mixed sentiment",
-      type: "mixed",
-      data: [
-        { label: "Entity name1", totalOccurance: 12 },
-        { label: "Entity name2", totalOccurance: 6 },
-      ],
-      backgroundColor: "orange",
-    },
-    {
-      label: "Positive",
-      type: "positive",
-      data: [
-        { label: "Entity name1", totalOccurance: 18 },
-        { label: "Entity name2", totalOccurance: 3 },
-      ],
-      backgroundColor: "green",
-    },
-    {
-      label: "Negative",
-      type: "negative",
-      data: [
-        { label: "Entity name1", totalOccurance: 5 },
-        { label: "Entity name2", totalOccurance: 16 },
-      ],
-      backgroundColor: "red",
-    },
-    {
-      label: "Neutral",
-      type: "netural",
-      data: [
-        { label: "Entity name1", totalOccurance: 18 },
-        { label: "Entity name2", totalOccurance: 3 },
-      ],
-      backgroundColor: "gray",
-    },
-  ];
+  function generateBubbleChartDataSets(entities, data) {
+    const sentimentData = {
+      mixed: [],
+      positive: [],
+      negative: [],
+      neutral: [],
+    };
+
+    for (const entity in entities) {
+      const entityData = {
+        totalOccurrence: 0,
+        positive_sentiment_percentage: 0,
+        negative_sentiment_percentage: 0,
+      };
+
+      for (const item of data) {
+        if (item.newsTitle.includes(entity)) {
+          entityData.totalOccurrence += 1;
+          entityData.positive_sentiment_percentage += parseInt(
+            item.positive_sentiment_percentage
+          );
+          entityData.negative_sentiment_percentage += parseInt(
+            item.negative_sentiment_percentage
+          );
+        }
+      }
+
+      if (entityData.totalOccurrence > 0) {
+        const avgPositive =
+          entityData.positive_sentiment_percentage / entityData.totalOccurrence;
+        const avgNegative =
+          entityData.negative_sentiment_percentage / entityData.totalOccurrence;
+
+        if (avgPositive > 50 && avgNegative > 50) {
+          sentimentData.mixed.push({
+            label: entity,
+            totalOccurance: entityData.totalOccurrence,
+          });
+        } else if (avgPositive >= 50) {
+          sentimentData.positive.push({
+            label: entity,
+            totalOccurance: entityData.totalOccurrence,
+          });
+        } else if (avgNegative >= 50) {
+          sentimentData.negative.push({
+            label: entity,
+            totalOccurance: entityData.totalOccurrence,
+          });
+        } else {
+          sentimentData.neutral.push({
+            label: entity,
+            totalOccurance: entityData.totalOccurrence,
+          });
+        }
+      }
+    }
+
+    const bubbleChartDataSets = [
+      {
+        label: "Mixed sentiment",
+        type: "mixed",
+        data: sentimentData.mixed,
+        backgroundColor: "orange",
+      },
+      {
+        label: "Positive",
+        type: "positive",
+        data: sentimentData.positive,
+        backgroundColor: "green",
+      },
+      {
+        label: "Negative",
+        type: "negative",
+        data: sentimentData.negative,
+        backgroundColor: "red",
+      },
+      {
+        label: "Neutral",
+        type: "neutral",
+        data: sentimentData.neutral,
+        backgroundColor: "gray",
+      },
+    ];
+
+    return bubbleChartDataSets;
+  }
+
+  // const bubbleChartDataSets = [
+  //   {
+  //     label: "Mixed sentiment",
+  //     type: "mixed",
+  //     data: [
+  //       { label: "Entity name1", totalOccurance: 12 },
+  //       { label: "Entity name2", totalOccurance: 6 },
+  //     ],
+  //     backgroundColor: "orange",
+  //   },
+  //   {
+  //     label: "Positive",
+  //     type: "positive",
+  //     data: [
+  //       { label: "Entity name1", totalOccurance: 18 },
+  //       { label: "Entity name2", totalOccurance: 3 },
+  //     ],
+  //     backgroundColor: "green",
+  //   },
+  //   {
+  //     label: "Negative",
+  //     type: "negative",
+  //     data: [
+  //       { label: "Entity name1", totalOccurance: 5 },
+  //       { label: "Entity name2", totalOccurance: 16 },
+  //     ],
+  //     backgroundColor: "red",
+  //   },
+  //   {
+  //     label: "Neutral",
+  //     type: "netural",
+  //     data: [
+  //       { label: "Entity name1", totalOccurance: 18 },
+  //       { label: "Entity name2", totalOccurance: 3 },
+  //     ],
+  //     backgroundColor: "gray",
+  //   },
+  // ];
 
   const handleSourceChange = (e) => {
     setSelectedSource(e.target.value);
@@ -298,7 +389,7 @@ function App(props) {
       const responseJSON = await response.json();
       const parsedData = await parseNewsData(responseJSON);
       setData(parsedData);
-      console.log("parsed Data", parsedData);
+      console.log("entities", entities);
       if (parsedData.length === 0) {
         setNoData(false);
       } else if (parsedData.length > 0) {
@@ -308,35 +399,6 @@ function App(props) {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  };
-
-  const createBubbleChartData = (parsedData) => {
-    const sentimentCounts = {};
-
-    parsedData.forEach((item) => {
-      item.occurredKeys.forEach((key) => {
-        if (!sentimentCounts[key]) {
-          sentimentCounts[key] = {
-            label: key,
-            value: 0,
-            positive_sentiment_percentage: 0,
-            negative_sentiment_percentage: 0,
-          };
-        }
-        sentimentCounts[key].value += 1;
-        sentimentCounts[key].positive_sentiment_percentage +=
-          item.positive_sentiment_percentage;
-        sentimentCounts[key].negative_sentiment_percentage +=
-          item.negative_sentiment_percentage;
-      });
-    });
-
-    Object.values(sentimentCounts).forEach((item) => {
-      item.positive_sentiment_percentage /= item.value;
-      item.negative_sentiment_percentage /= item.value;
-    });
-
-    return Object.values(sentimentCounts);
   };
 
   const handleSwitchChange = (event) => {
@@ -425,16 +487,16 @@ function App(props) {
                 {data?.length === 0 ? (
                   <p>Nothing found</p>
                 ) : (
-                  data?.map((newsItem, index) => {
-                    return <NewsItem newsItem={newsItem} index={index} />;
+                  data?.map((newsItemData, index) => {
+                    return <NewsItem newsItem={newsItemData} key={index} />;
                   })
                 )}
               </div>
             )}
           </StyledNewsContainer>{" "}
-          {entities && (
+          {bubbleChartData && (
             <div style={{ overflow: "scroll" }}>
-              <BubbleChart data={bubbleChartDataSets} />
+              <BubbleChart data={bubbleChartData} />
             </div>
           )}
           <div>
@@ -554,7 +616,7 @@ function App(props) {
           )}
           {tabValue === 1 && (
             <div>
-              {entities && (
+              {bubbleChartData && (
                 <div>
                   <BubbleChart
                     data={bubbleChartData}
