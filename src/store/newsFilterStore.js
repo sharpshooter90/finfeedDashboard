@@ -1,10 +1,5 @@
-import create from "zustand";
+import { createContext } from "react";
 
-const useNewsFilterStore = create((set) => ({
-  filters: { sentiment: [], entities: [] },
-  setFilters: (filters) => set({ filters }),
-  setEntitiesFilter: (entities) =>
-    set((state) => ({ filters: { ...state.filters, entities } })),
-}));
+const NewsFilterContext = createContext();
 
-export default useNewsFilterStore;
+export default NewsFilterContext;

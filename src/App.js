@@ -30,6 +30,7 @@ import EmptyState from "./components/EmptyState";
 import BubbleChart from "./components/EntitiesBubbleChart";
 import NewsItem from "./components/NewsItem";
 import NewsWrapper from "./components/NewsWrapper";
+import NewsFilterContext from "./store/newsFilterStore";
 
 import SentimentPieChart from "./components/SentimentPieChart";
 import "./styles.css";
@@ -67,6 +68,10 @@ function App(props) {
   const [noData, setNoData] = useState(true);
   const [bubbleChartData, setBubbleChartData] = useState();
   const [selectedBubble, setSelectedBubble] = useState(null);
+  const [filters, setFilters] = useState({
+    sentiment: [],
+    entities: [],
+  });
 
   const isMobile = useMediaQuery("(max-width: 1080px)");
   const handleChange = (event, newValue) => {
@@ -231,9 +236,12 @@ function App(props) {
     setSelectedSource(e.target.value);
     fetchData(e.target.value, "all");
   };
+
   const handleBubbleClick = (bubble) => {
-    console.log(bubble);
-    setSelectedBubble(bubble);
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      entities: [{ label: bubble.label, value: bubble.label }],
+    }));
   };
 
   const handleKeywordChange = (event) => {
@@ -529,54 +537,55 @@ function App(props) {
   }
 
   return (
-    <StyledFullHeightContainer className="App">
-      <AppBar component="nav">
-        <Toolbar sx={{ background: "#fff" }}>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
-          >
-            FinFeeds
-          </Typography>
-          <Box
-            sx={{
-              display: { xs: "none", sm: "flex" },
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-            gap={2}
-          >
-            <FormControl>
-              <InputLabel variant="standard" htmlFor="uncontrolled-native">
-                Source
-              </InputLabel>
-              <NativeSelect
-                value={selectedSource}
-                onChange={handleSourceChange}
-              >
-                <option value="WSJ">WSJ</option>
-                <option value="CNBC">CNBC</option>
-                <option value="Polygon">Polygon</option>
-              </NativeSelect>
-            </FormControl>
-            <TextField
-              id="outlined-basic"
-              label="Search Keywords"
-              variant="outlined"
-              value={newsKeywordSearchInput}
-              onChange={handleKeywordChange}
-              placeholder="Enter keyword"
-              size="small"
-            />
-            <Button
-              variant="contained"
-              size="small"
-              onClick={handleFetchButtonClick}
+    <NewsFilterContext.Provider value={{ filters, setFilters }}>
+      <StyledFullHeightContainer className="App">
+        <AppBar component="nav">
+          <Toolbar sx={{ background: "#fff" }}>
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
             >
-              Fetch News
-            </Button>
-            {/* <Typography
+              FinFeeds
+            </Typography>
+            <Box
+              sx={{
+                display: { xs: "none", sm: "flex" },
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              gap={2}
+            >
+              <FormControl>
+                <InputLabel variant="standard" htmlFor="uncontrolled-native">
+                  Source
+                </InputLabel>
+                <NativeSelect
+                  value={selectedSource}
+                  onChange={handleSourceChange}
+                >
+                  <option value="WSJ">WSJ</option>
+                  <option value="CNBC">CNBC</option>
+                  <option value="Polygon">Polygon</option>
+                </NativeSelect>
+              </FormControl>
+              <TextField
+                id="outlined-basic"
+                label="Search Keywords"
+                variant="outlined"
+                value={newsKeywordSearchInput}
+                onChange={handleKeywordChange}
+                placeholder="Enter keyword"
+                size="small"
+              />
+              <Button
+                variant="contained"
+                size="small"
+                onClick={handleFetchButtonClick}
+              >
+                Fetch News
+              </Button>
+              {/* <Typography
               component="label"
               endDecorator={
                 <Switch
@@ -588,11 +597,12 @@ function App(props) {
             >
               Highlight Word occurrence
             </Typography> */}
-          </Box>
-        </Toolbar>
-      </AppBar>
-      <Box mt={8}>{renderNewsItems()}</Box>
-    </StyledFullHeightContainer>
+            </Box>
+          </Toolbar>
+        </AppBar>
+        <Box mt={8}>{renderNewsItems()}</Box>
+      </StyledFullHeightContainer>
+    </NewsFilterContext.Provider>
   );
 }
 

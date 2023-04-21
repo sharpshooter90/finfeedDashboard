@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import { MultiSelect } from "react-multi-select-component";
 
+import NewsFilterContext from "../../store/newsFilterStore";
 import { getSentiment } from "../../utils";
 import NewsItem from "../NewsItem";
 
 const NewsWrapper = ({ data }) => {
-  const [filters, setFilters] = useState({ sentiment: [], entities: [] });
+  const { filters, setFilters } = useContext(NewsFilterContext);
 
   const sentimentOptions = [
     { label: "Positive", value: "positive" },
@@ -49,12 +50,12 @@ const NewsWrapper = ({ data }) => {
         <MultiSelect
           options={sentimentOptions}
           value={filters.sentiment}
-          onChange={(selected) =>
+          onChange={(selected) => {
             setFilters((prevFilters) => ({
               ...prevFilters,
               sentiment: selected,
-            }))
-          }
+            }));
+          }}
           labelledBy="Select Sentiment"
         />
       </div>
@@ -63,21 +64,21 @@ const NewsWrapper = ({ data }) => {
         <MultiSelect
           options={entityOptions}
           value={filters.entities}
-          onChange={(selected) =>
+          onChange={(selected) => {
             setFilters((prevFilters) => ({
               ...prevFilters,
               entities: selected,
-            }))
-          }
+            }));
+          }}
           labelledBy="Select Entities"
         />
       </div>
       {data && (
         <div>
-          {filteredNewsItems.length === 0 ? (
+          {filteredNewsItems?.length === 0 ? (
             <p>Nothing found</p>
           ) : (
-            filteredNewsItems.map((newsItemData, index) => (
+            filteredNewsItems?.map((newsItemData, index) => (
               <NewsItem newsItem={newsItemData} key={index} />
             ))
           )}
