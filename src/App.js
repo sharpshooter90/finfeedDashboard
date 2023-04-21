@@ -634,11 +634,11 @@ function App(props) {
           <BottomNavigation showLabels value={tabValue} onChange={handleChange}>
             <BottomNavigationAction label="News Feeds" icon={<FeedIcon />} />
             <BottomNavigationAction
-              label="Bubble Chart"
+              label="Sentiment split for entities"
               icon={<BubbleChartIcon />}
             />
             <BottomNavigationAction
-              label="Pie Chart"
+              label="Sentiment split"
               icon={<DonutLargeIcon />}
             />
           </BottomNavigation>
