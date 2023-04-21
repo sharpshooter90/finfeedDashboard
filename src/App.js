@@ -145,7 +145,6 @@ function App(props) {
   const [data, setData] = useState(null);
   const [entities, setEntities] = useState(null);
   const [sentimentData, setSentimentData] = useState(null);
-  const [bubbleChartData, setBubbleChartData] = useState(null);
   const [selectedSource, setSelectedSource] = useState("WSJ");
   const [highlightTextChecked, setHighlightTextChecked] = React.useState(false);
   const [tabValue, setTabValue] = useState(0);
@@ -231,12 +230,47 @@ function App(props) {
       neutral: neuPercentage,
     });
 
-    // Call the createBubbleChartData function and set the bubbleChartData state
-    const dataArray = createBubbleChartData(parsedData);
-    setBubbleChartData(dataArray);
-
     return parsedData;
   };
+
+  const bubbleChartDataSets = [
+    {
+      label: "Mixed sentiment",
+      type: "mixed",
+      data: [
+        { label: "Entity name1", totalOccurance: 12 },
+        { label: "Entity name2", totalOccurance: 6 },
+      ],
+      backgroundColor: "orange",
+    },
+    {
+      label: "Positive",
+      type: "positive",
+      data: [
+        { label: "Entity name1", totalOccurance: 18 },
+        { label: "Entity name2", totalOccurance: 3 },
+      ],
+      backgroundColor: "green",
+    },
+    {
+      label: "Negative",
+      type: "negative",
+      data: [
+        { label: "Entity name1", totalOccurance: 5 },
+        { label: "Entity name2", totalOccurance: 16 },
+      ],
+      backgroundColor: "red",
+    },
+    {
+      label: "Neutral",
+      type: "netural",
+      data: [
+        { label: "Entity name1", totalOccurance: 18 },
+        { label: "Entity name2", totalOccurance: 3 },
+      ],
+      backgroundColor: "gray",
+    },
+  ];
 
   const handleSourceChange = (e) => {
     setSelectedSource(e.target.value);
@@ -400,7 +434,7 @@ function App(props) {
           </StyledNewsContainer>{" "}
           {entities && (
             <div style={{ overflow: "scroll" }}>
-              <BubbleChart data={bubbleChartData} width={800} height={600} />
+              <BubbleChart data={bubbleChartDataSets} />
             </div>
           )}
           <div>
