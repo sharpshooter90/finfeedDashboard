@@ -76,7 +76,10 @@ const NewsWrapper = ({ data }) => {
       {data && (
         <div>
           {filteredNewsItems?.length === 0 ? (
-            <p>Nothing found</p>
+            <p>
+              Nothing found for sentiment {filters?.sentiment[0].value} and
+              entity {filters?.entities[0].value}
+            </p>
           ) : (
             filteredNewsItems?.map((newsItemData, index) => (
               <NewsItem newsItem={newsItemData} key={index} />
