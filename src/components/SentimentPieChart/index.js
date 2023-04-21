@@ -1,4 +1,6 @@
+import React, { useContext } from "react";
 import { PieChart } from "react-minimal-pie-chart";
+import NewsFilterContext from "../../store/newsFilterStore";
 
 const Legend = ({ data }) => {
   return (
@@ -24,6 +26,7 @@ const Legend = ({ data }) => {
 };
 
 export const SentimentPieChart = ({ sentimentData }) => {
+  const { setFilters } = useContext(NewsFilterContext);
   if (!sentimentData) {
     return <p>Loading sentiment data...</p>;
   }
@@ -62,6 +65,13 @@ export const SentimentPieChart = ({ sentimentData }) => {
           fontFamily: "sans-serif",
         }}
         labelPosition={50}
+        onClick={(_, index) => {
+          const clickedSentiment = chartData[index].title.toLowerCase();
+          setFilters((prevFilters) => ({
+            ...prevFilters,
+            sentiment: [{ label: clickedSentiment, value: clickedSentiment }],
+          }));
+        }}
       />
       <Legend data={chartData} />
     </div>
