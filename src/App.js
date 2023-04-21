@@ -134,9 +134,9 @@ const NewsItem = ({ newsItem }) => {
 
 const toggleHighlight = (highlightTextChecked) => {
   if (highlightTextChecked) {
-    document.body.classList.add("isTextOccuranceHighlightEnabled");
+    document.body.classList.add("isTextOccurrenceHighlightEnabled");
   } else {
-    document.body.classList.remove("isTextOccuranceHighlightEnabled");
+    document.body.classList.remove("isTextOccurrenceHighlightEnabled");
   }
 };
 
@@ -273,22 +273,22 @@ function App(props) {
         if (avgPositive > 50 && avgNegative > 50) {
           sentimentData.mixed.push({
             label: entity,
-            totalOccurance: entityData.totalOccurrence,
+            totalOccurrence: entityData.totalOccurrence,
           });
         } else if (avgPositive >= 50) {
           sentimentData.positive.push({
             label: entity,
-            totalOccurance: entityData.totalOccurrence,
+            totalOccurrence: entityData.totalOccurrence,
           });
         } else if (avgNegative >= 50) {
           sentimentData.negative.push({
             label: entity,
-            totalOccurance: entityData.totalOccurrence,
+            totalOccurrence: entityData.totalOccurrence,
           });
         } else {
           sentimentData.neutral.push({
             label: entity,
-            totalOccurance: entityData.totalOccurrence,
+            totalOccurrence: entityData.totalOccurrence,
           });
         }
       }
@@ -329,8 +329,8 @@ function App(props) {
   //     label: "Mixed sentiment",
   //     type: "mixed",
   //     data: [
-  //       { label: "Entity name1", totalOccurance: 12 },
-  //       { label: "Entity name2", totalOccurance: 6 },
+  //       { label: "Entity name1", totalOccurrence: 12 },
+  //       { label: "Entity name2", totalOccurrence: 6 },
   //     ],
   //     backgroundColor: "orange",
   //   },
@@ -338,8 +338,8 @@ function App(props) {
   //     label: "Positive",
   //     type: "positive",
   //     data: [
-  //       { label: "Entity name1", totalOccurance: 18 },
-  //       { label: "Entity name2", totalOccurance: 3 },
+  //       { label: "Entity name1", totalOccurrence: 18 },
+  //       { label: "Entity name2", totalOccurrence: 3 },
   //     ],
   //     backgroundColor: "green",
   //   },
@@ -347,8 +347,8 @@ function App(props) {
   //     label: "Negative",
   //     type: "negative",
   //     data: [
-  //       { label: "Entity name1", totalOccurance: 5 },
-  //       { label: "Entity name2", totalOccurance: 16 },
+  //       { label: "Entity name1", totalOccurrence: 5 },
+  //       { label: "Entity name2", totalOccurrence: 16 },
   //     ],
   //     backgroundColor: "red",
   //   },
@@ -356,8 +356,8 @@ function App(props) {
   //     label: "Neutral",
   //     type: "netural",
   //     data: [
-  //       { label: "Entity name1", totalOccurance: 18 },
-  //       { label: "Entity name2", totalOccurance: 3 },
+  //       { label: "Entity name1", totalOccurrence: 18 },
+  //       { label: "Entity name2", totalOccurrence: 3 },
   //     ],
   //     backgroundColor: "gray",
   //   },
@@ -467,7 +467,7 @@ function App(props) {
             />
           }
         >
-          Highlight Word Occurances
+          Highlight Word occurrence
         </Typography>
       </Box>
     </Box>
@@ -575,7 +575,7 @@ function App(props) {
                   />
                 }
               >
-                Highlight Word Occurances
+                Highlight Word occurrence
               </Typography>
             </Box>
           </Toolbar>
@@ -712,7 +712,7 @@ function App(props) {
                 />
               }
             >
-              Highlight Word Occurances
+              Highlight Word occurrence
             </Typography>
           </Box>
         </Toolbar>

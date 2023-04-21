@@ -24,11 +24,11 @@ const useBubbleChart = (chartRef, data) => {
       }))
     );
 
-    const maxTotalOccurance = d3.max(flattenedData, (d) => d.totalOccurance);
+    const maxTotalOccurrence = d3.max(flattenedData, (d) => d.totalOccurrence);
 
     const radiusScale = d3
       .scaleSqrt()
-      .domain([0, maxTotalOccurance])
+      .domain([0, maxTotalOccurrence])
       .range([10, 50]);
 
     const simulation = d3
@@ -37,7 +37,7 @@ const useBubbleChart = (chartRef, data) => {
       .force("center", d3.forceCenter(width / 2, height / 2))
       .force(
         "collision",
-        d3.forceCollide().radius((d) => radiusScale(d.totalOccurance))
+        d3.forceCollide().radius((d) => radiusScale(d.totalOccurrence))
       )
       .on("tick", ticked);
 
@@ -47,15 +47,15 @@ const useBubbleChart = (chartRef, data) => {
 
     bubbleGroup
       .append("circle")
-      .attr("r", (d) => radiusScale(d.totalOccurance))
+      .attr("r", (d) => radiusScale(d.totalOccurrence))
       .style("fill", (d) => d.backgroundColor);
 
     bubbleGroup
       .append("text")
       .attr("text-anchor", "middle")
       .attr("dy", ".3em")
-      .text((d) => truncateText(d.label, radiusScale(d.totalOccurance)))
-      .style("font-size", (d) => `${radiusScale(d.totalOccurance) / 3}px`);
+      .text((d) => truncateText(d.label, radiusScale(d.totalOccurrence)))
+      .style("font-size", (d) => `${radiusScale(d.totalOccurrence) / 3}px`);
 
     // Create a tooltip
     const tooltip = d3
@@ -70,7 +70,7 @@ const useBubbleChart = (chartRef, data) => {
         tooltip.transition().duration(200).style("opacity", 0.9);
         tooltip
           .html(
-            `<div><strong>${d.label}</strong></div><div>Total Occurance: ${d.totalOccurance}</div>`
+            `<div><strong>${d.label}</strong></div><div>Total Occurrence: ${d.totalOccurrence}</div>`
           )
           .style("left", `${event.pageX}px`)
           .style("top", `${event.pageY - 28}px`);
