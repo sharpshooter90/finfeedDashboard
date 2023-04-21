@@ -58,11 +58,11 @@ export const SentimentPieChart = ({ sentimentData }) => {
     <div>
       <PieChart
         data={chartData}
-        lineWidth={60}
+        // lineWidth={60}
         label={({ dataEntry }) => `${Math.round(dataEntry.percentage)} %`}
         labelStyle={{
-          fontSize: "5px",
-          fontFamily: "sans-serif",
+          fontSize: 5,
+          fontWeight: "500",
         }}
         labelPosition={50}
         onClick={(_, index) => {
