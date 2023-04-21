@@ -3,8 +3,7 @@ import DonutLargeIcon from "@mui/icons-material/DonutLarge";
 import FeedIcon from "@mui/icons-material/Feed";
 import MenuIcon from "@mui/icons-material/Menu";
 import Box from "@mui/joy/Box";
-import Card from "@mui/joy/Card";
-import Chip from "@mui/joy/Chip";
+
 import Divider from "@mui/joy/Divider";
 import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
@@ -24,19 +23,17 @@ import Toolbar from "@mui/material/Toolbar";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import axios from "axios";
 import React, { Fragment, useEffect, useState } from "react";
-import Moment from "react-moment";
+
 import styled from "styled-components";
 
 import EmptyState from "./components/EmptyState";
 import BubbleChart from "./components/EntitiesBubbleChart";
-import Sentiment from "./components/Sentiment";
+import NewsItem from "./components/NewsItem";
+import NewsWrapper from "./components/NewsWrapper";
+
 import SentimentPieChart from "./components/SentimentPieChart";
 import "./styles.css";
-import {
-  getSentiment,
-  getSentimentStyle,
-  getSentimentWithPercentage,
-} from "./utils";
+import { getSentimentWithPercentage } from "./utils";
 
 import { countOccurrences } from "./utils";
 
@@ -49,91 +46,6 @@ const StyledNewsContainer = styled.div`
   overflow-y: scroll;
   padding-right: 48px;
 `;
-
-function highlightOccurrence(newsTitle, occurredKeys) {
-  if (!occurredKeys.length) {
-    // no occurred keys, return original newsTitle
-    return newsTitle;
-  }
-  const regex = new RegExp(`(${occurredKeys.join("|")})`, "gi");
-  return newsTitle.replace(
-    regex,
-    '<span class="text-occurrence-highlight">$1</span>'
-  );
-}
-
-const NewsItem = ({ newsItem }) => {
-  return (
-    <Box sx={{ mb: 2, ml: 1 }}>
-      <Card
-        variant="outlined"
-        sx={(theme) => ({
-          ...getSentimentStyle(
-            getSentiment(
-              newsItem.negative_sentiment_percentage,
-              newsItem.positive_sentiment_percentage
-            )
-          ),
-          width: "100%",
-          flexDirection: "column",
-          gap: "16px",
-          padding: "16px",
-          cursor: "pointer",
-          transition: "transform 0.3s, border 0.3s",
-          overflow: "hidden",
-          "&:hover": {
-            borderColor: theme.vars.palette.primary.outlinedHoverBorder,
-            transform: "translateY(-2px)",
-          },
-        })}
-      >
-        <Typography
-          level="h2"
-          sx={{ fontSize: "md", overflowX: "scroll" }}
-          mb={0.5}
-        >
-          <div
-            dangerouslySetInnerHTML={{
-              __html: highlightOccurrence(
-                newsItem.newsTitle,
-                newsItem.occurredKeys
-              ),
-            }}
-          />
-        </Typography>
-        <Typography level="body2">
-          <Moment format="MMM Do YYYY h:mm a" date={newsItem?.timestamp} />
-        </Typography>
-        <Box sx={{ display: "flex" }}>
-          {newsItem?.occurredKeys?.map((item) => {
-            return (
-              <Chip
-                variant="outlined"
-                color="primary"
-                size="sm"
-                sx={{ pointerEvents: "none" }}
-              >
-                <Typography
-                  level="body3"
-                  sx={{ fontWeight: "md", color: "text.secondary" }}
-                >
-                  {item}
-                </Typography>
-              </Chip>
-            );
-          })}
-        </Box>
-
-        <Stack direction="row" spacing={2}>
-          <Sentiment
-            pos={newsItem.positive_sentiment_percentage}
-            neg={newsItem.negative_sentiment_percentage}
-          />
-        </Stack>
-      </Card>
-    </Box>
-  );
-};
 
 const toggleHighlight = (highlightTextChecked) => {
   if (highlightTextChecked) {
@@ -154,6 +66,7 @@ function App(props) {
   const [newsKeywordSearchInput, setNewsKeywordSearchInput] = useState("all");
   const [noData, setNoData] = useState(true);
   const [bubbleChartData, setBubbleChartData] = useState();
+  const [selectedBubble, setSelectedBubble] = useState(null);
 
   const isMobile = useMediaQuery("(max-width: 1080px)");
   const handleChange = (event, newValue) => {
@@ -174,7 +87,6 @@ function App(props) {
     const rawData = response.data;
     setEntities(response.entities);
     const rawEntities = response.entities;
-    console.log("data", rawData);
     const keys = Object.keys(rawEntities);
 
     const parsedData = await Promise.all(
@@ -220,8 +132,6 @@ function App(props) {
       })
     );
 
-    console.log("parsed data", parsedData);
-
     // Set the sentimentData state
     setSentimentData(getSentimentWithPercentage(parsedData));
 
@@ -248,7 +158,7 @@ function App(props) {
       for (const item of data) {
         if (item.newsTitle.includes(entity)) {
           entityData.totalOccurrence += 1;
-          entityData.positive_sentiment_percentage += parseInt(
+          entityData.positive_them_percentage += parseInt(
             item.positive_sentiment_percentage
           );
           entityData.negative_sentiment_percentage += parseInt(
@@ -317,48 +227,13 @@ function App(props) {
     return bubbleChartDataSets;
   }
 
-  // const bubbleChartDataSets = [
-  //   {
-  //     label: "Mixed sentiment",
-  //     type: "mixed",
-  //     data: [
-  //       { label: "Entity name1", totalOccurrence: 12 },
-  //       { label: "Entity name2", totalOccurrence: 6 },
-  //     ],
-  //     backgroundColor: "orange",
-  //   },
-  //   {
-  //     label: "Positive",
-  //     type: "positive",
-  //     data: [
-  //       { label: "Entity name1", totalOccurrence: 18 },
-  //       { label: "Entity name2", totalOccurrence: 3 },
-  //     ],
-  //     backgroundColor: "green",
-  //   },
-  //   {
-  //     label: "Negative",
-  //     type: "negative",
-  //     data: [
-  //       { label: "Entity name1", totalOccurrence: 5 },
-  //       { label: "Entity name2", totalOccurrence: 16 },
-  //     ],
-  //     backgroundColor: "red",
-  //   },
-  //   {
-  //     label: "Neutral",
-  //     type: "netural",
-  //     data: [
-  //       { label: "Entity name1", totalOccurrence: 18 },
-  //       { label: "Entity name2", totalOccurrence: 3 },
-  //     ],
-  //     backgroundColor: "gray",
-  //   },
-  // ];
-
   const handleSourceChange = (e) => {
     setSelectedSource(e.target.value);
     fetchData(e.target.value, "all");
+  };
+  const handleBubbleClick = (bubble) => {
+    console.log(bubble);
+    setSelectedBubble(bubble);
   };
 
   const handleKeywordChange = (event) => {
@@ -382,7 +257,6 @@ function App(props) {
       const responseJSON = await response.json();
       const parsedData = await parseNewsData(responseJSON);
       setData(parsedData);
-      console.log("entities", entities);
       if (parsedData.length === 0) {
         setNoData(false);
       } else if (parsedData.length > 0) {
@@ -404,7 +278,6 @@ function App(props) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
   const handleDrawerToggle = () => {
-    console.log("drawer toggle");
     setMobileOpen((prevState) => !prevState);
   };
 
@@ -474,8 +347,8 @@ function App(props) {
     } else {
       return (
         <Stack direction="row" spacing={2} pt={2}>
-          <StyledNewsContainer style={{ width: "460px" }}>
-            {data && (
+          <StyledNewsContainer style={{ width: "560px" }}>
+            {/* {data && (
               <div>
                 {data?.length === 0 ? (
                   <p>Nothing found</p>
@@ -485,11 +358,18 @@ function App(props) {
                   })
                 )}
               </div>
-            )}
+            )} */}
+
+            {data && <NewsWrapper data={data} />}
           </StyledNewsContainer>{" "}
           {bubbleChartData && (
             <div style={{ overflow: "scroll" }}>
-              <BubbleChart data={bubbleChartData} width={700} height={600} />
+              <BubbleChart
+                data={bubbleChartData}
+                width={700}
+                height={400}
+                onBubbleClick={handleBubbleClick}
+              />
             </div>
           )}
           <div>
@@ -615,6 +495,7 @@ function App(props) {
                     data={bubbleChartData}
                     width={300}
                     height={300}
+                    onBubbleClick={handleBubbleClick}
                   />
                 </div>
               )}

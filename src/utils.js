@@ -62,3 +62,15 @@ export const getSentimentWithPercentage = (parsedData) => {
     mixed: (sentimentCounts.mixed / totalCount) * 100,
   };
 };
+
+export const highlightOccurrence = (newsTitle, occurredKeys) => {
+  if (!occurredKeys.length) {
+    // no occurred keys, return original newsTitle
+    return newsTitle;
+  }
+  const regex = new RegExp(`(${occurredKeys.join("|")})`, "gi");
+  return newsTitle.replace(
+    regex,
+    '<span class="text-occurrence-highlight">$1</span>'
+  );
+};

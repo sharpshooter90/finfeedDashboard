@@ -2,9 +2,9 @@
 import React, { useRef } from "react";
 import Legend from "../Legend";
 import useBubbleChart from "./useBubbleChart";
-const BubbleChart = ({ data, width, height }) => {
+const BubbleChart = ({ data, width, height, onBubbleClick }) => {
   const chartRef = useRef();
-  useBubbleChart(chartRef, data, width, height);
+  useBubbleChart(chartRef, data, width, height, onBubbleClick);
 
   return (
     <React.Fragment>

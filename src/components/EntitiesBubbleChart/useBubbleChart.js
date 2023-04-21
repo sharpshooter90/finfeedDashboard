@@ -3,7 +3,7 @@ import * as d3 from "d3";
 import { useEffect } from "react";
 import "./style.css";
 
-const useBubbleChart = (chartRef, data, width, height) => {
+const useBubbleChart = (chartRef, data, width, height, onBubbleClick) => {
   useEffect(() => {
     d3.select(chartRef.current).select("svg").remove();
 
@@ -85,6 +85,10 @@ const useBubbleChart = (chartRef, data, width, height) => {
       const maxChars = Math.floor(maxWidth / 6);
       return textLength > maxChars ? `${text.substr(0, maxChars)}...` : text;
     }
+
+    bubbleGroup.on("click", (event, d) => {
+      onBubbleClick(d);
+    });
 
     return () => {
       simulation.stop();
