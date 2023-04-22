@@ -45,7 +45,7 @@ export const SentimentPieChart = ({ sentimentData }) => {
     {
       title: "Neutral",
       value: sentimentData.neutral,
-      color: "gray",
+      color: "#F39C12",
     },
     {
       title: "Mixed",

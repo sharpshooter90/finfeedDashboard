@@ -1,6 +1,7 @@
+import { Box, Stack } from "@mui/joy";
+import { Typography } from "@mui/material";
 import React, { useContext } from "react";
 import { MultiSelect } from "react-multi-select-component";
-
 import NewsFilterContext from "../../store/newsFilterStore";
 import { getSentiment } from "../../utils";
 import NewsItem from "../NewsItem";
@@ -45,34 +46,38 @@ const NewsWrapper = ({ data }) => {
 
   return (
     <div>
-      <div>
-        <h3>Filter by Sentiment:</h3>
-        <MultiSelect
-          options={sentimentOptions}
-          value={filters.sentiment}
-          onChange={(selected) => {
-            setFilters((prevFilters) => ({
-              ...prevFilters,
-              sentiment: selected,
-            }));
-          }}
-          labelledBy="Select Sentiment"
-        />
-      </div>
-      <div>
-        <h3>Filter by Entities:</h3>
-        <MultiSelect
-          options={entityOptions}
-          value={filters.entities}
-          onChange={(selected) => {
-            setFilters((prevFilters) => ({
-              ...prevFilters,
-              entities: selected,
-            }));
-          }}
-          labelledBy="Select Entities"
-        />
-      </div>
+      <Stack direction="row" gap={2} mb={1} padding={1}>
+        <Box width="100%">
+          <Typography>Filter by Sentiment:</Typography>
+          <MultiSelect
+            options={sentimentOptions}
+            value={filters.sentiment}
+            onChange={(selected) => {
+              setFilters((prevFilters) => ({
+                ...prevFilters,
+                sentiment: selected,
+              }));
+            }}
+            // labelledBy="Select Sentiment"
+            placeholder="Filter by Sentiment"
+          />
+        </Box>
+        <Box width="100%">
+          <Typography>Filter by Entities:</Typography>
+          <MultiSelect
+            options={entityOptions}
+            value={filters.entities}
+            onChange={(selected) => {
+              setFilters((prevFilters) => ({
+                ...prevFilters,
+                entities: selected,
+              }));
+            }}
+            // labelledBy="Select Entities"
+            placeholder="Filter by Entities"
+          />
+        </Box>
+      </Stack>
       {data && (
         <div>
           {filteredNewsItems?.length === 0 ? (

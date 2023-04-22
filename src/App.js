@@ -67,7 +67,6 @@ function App(props) {
   const [newsKeywordSearchInput, setNewsKeywordSearchInput] = useState("all");
   const [noData, setNoData] = useState(true);
   const [bubbleChartData, setBubbleChartData] = useState();
-  const [selectedBubble, setSelectedBubble] = useState(null);
   const [filters, setFilters] = useState({
     sentiment: [],
     entities: [],
@@ -83,11 +82,6 @@ function App(props) {
   }, []);
 
   const parseNewsData = async (data) => {
-    // Add counters for positive, negative, and neutral sentiment
-    let posCount = 0;
-    let negCount = 0;
-    let neuCount = 0;
-
     const response = JSON.parse(data);
     const rawData = response.data;
     setEntities(response.entities);
@@ -116,15 +110,6 @@ function App(props) {
         );
         const pos = sentimentResponse.data.positive_sentiment_percentage;
         const neg = sentimentResponse.data.negative_sentiment_percentage;
-
-        // Update sentiment counters
-        if (pos > 0) {
-          posCount++;
-        } else if (neg > 0) {
-          negCount++;
-        } else {
-          neuCount++;
-        }
 
         return {
           newsTitle,
@@ -207,25 +192,25 @@ function App(props) {
         label: "Mixed sentiment",
         type: "mixed",
         data: sentimentData.mixed,
-        backgroundColor: "orange",
+        backgroundColor: "#F39C12",
       },
       {
         label: "Positive",
         type: "positive",
         data: sentimentData.positive,
-        backgroundColor: "green",
+        backgroundColor: "#27AE60",
       },
       {
         label: "Negative",
         type: "negative",
         data: sentimentData.negative,
-        backgroundColor: "red",
+        backgroundColor: "#E74C3C",
       },
       {
         label: "Neutral",
         type: "neutral",
         data: sentimentData.neutral,
-        backgroundColor: "gray",
+        backgroundColor: "#F39C12",
       },
     ];
 
@@ -254,6 +239,9 @@ function App(props) {
 
   const fetchData = async (source = "WSJ", keyword = "all") => {
     setGlobalLoading(true);
+    if (keyword.length === 0) {
+      keyword = "all";
+    }
     console.log("Fetching", source, keyword);
     const apiUrl = `https://biz-api.text-miner.com/finfeed/${source.toLowerCase()}/${keyword.toLowerCase()}`;
 
