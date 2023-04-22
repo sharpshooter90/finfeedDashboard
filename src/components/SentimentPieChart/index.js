@@ -64,6 +64,7 @@ export const SentimentPieChart = ({ sentimentData }) => {
           fontSize: 5,
           fontWeight: "500",
         }}
+        segmentsStyle={{ cursor: "pointer" }}
         labelPosition={50}
         onClick={(_, index) => {
           const clickedSentiment = chartData[index].title.toLowerCase();
