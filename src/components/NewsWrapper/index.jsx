@@ -1,12 +1,13 @@
 import { Box, Stack } from "@mui/joy";
+import Alert from "@mui/joy/Alert";
 import { Typography } from "@mui/material";
-import React, { useContext } from "react";
+import React, { Fragment, useContext } from "react";
 import { MultiSelect } from "react-multi-select-component";
 import NewsFilterContext from "../../store/newsFilterStore";
 import { getSentiment } from "../../utils";
 import NewsItem from "../NewsItem";
 
-const NewsWrapper = ({ data }) => {
+const NewsWrapper = ({ data, loading }) => {
   const { filters, setFilters } = useContext(NewsFilterContext);
 
   const sentimentOptions = [
@@ -47,11 +48,12 @@ const NewsWrapper = ({ data }) => {
   return (
     <div>
       <Stack direction="row" gap={2} mb={1} padding={1}>
-        <Box width="100%">
+        <Box sx={{ width: "calc(50% - 16px/2)" }}>
           <Typography>Filter by Sentiment:</Typography>
           <MultiSelect
             options={sentimentOptions}
             value={filters.sentiment}
+            style={{ flexShrink: 0, flexGrow: 0 }}
             onChange={(selected) => {
               setFilters((prevFilters) => ({
                 ...prevFilters,
@@ -60,13 +62,15 @@ const NewsWrapper = ({ data }) => {
             }}
             // labelledBy="Select Sentiment"
             placeholder="Filter by Sentiment"
+            isLoading={loading}
           />
         </Box>
-        <Box width="100%">
+        <Box sx={{ width: "calc(50% - (16px/2))" }}>
           <Typography>Filter by Entities:</Typography>
           <MultiSelect
             options={entityOptions}
             value={filters.entities}
+            style={{ flexShrink: 0, flexGrow: 0 }}
             onChange={(selected) => {
               setFilters((prevFilters) => ({
                 ...prevFilters,
@@ -75,22 +79,32 @@ const NewsWrapper = ({ data }) => {
             }}
             // labelledBy="Select Entities"
             placeholder="Filter by Entities"
+            isLoading={loading}
           />
         </Box>
       </Stack>
+      {loading && (
+        <Fragment>
+          {[...Array(10)].map((_, index) => (
+            <NewsItem key={index} loading={loading} />
+          ))}
+        </Fragment>
+      )}
       {data && (
-        <div>
-          {filteredNewsItems?.length === 0 ? (
-            <p>
-              Nothing found for sentiment {filters?.sentiment[0].value} and
-              entity {filters?.entities[0].value}
-            </p>
+        <Box mb={16}>
+          {filteredNewsItems?.length === 0 && loading === false ? (
+            <Box p={2}>
+              <Alert variant="soft">
+                Nothing found for sentiment {filters?.sentiment[0].value} and
+                entity {filters?.entities[0].value}
+              </Alert>
+            </Box>
           ) : (
             filteredNewsItems?.map((newsItemData, index) => (
-              <NewsItem newsItem={newsItemData} key={index} />
+              <NewsItem newsItem={newsItemData} key={index} loading={loading} />
             ))
           )}
-        </div>
+        </Box>
       )}
     </div>
   );

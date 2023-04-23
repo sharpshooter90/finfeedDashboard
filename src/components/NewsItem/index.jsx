@@ -36,29 +36,32 @@ const NewsItem = ({ newsItem, loading }) => {
             <Skeleton animation="wave" />
             <Skeleton animation="wave" />
             <Skeleton animation="wave" />
+            <Skeleton animation="wave" width="65%" sx={{ mb: 4 }} />
+            <Skeleton animation="wave" width="20%" height={24} />
           </Fragment>
         ) : (
-          <Typography sx={{ fontWeight: "600" }}>
-            <div
-              dangerouslySetInnerHTML={{
-                __html: highlightOccurrence(
-                  newsItem.newsTitle,
-                  newsItem.occurredKeys
-                ),
-              }}
-            />
-          </Typography>
+          <Fragment>
+            <Typography sx={{ fontWeight: "600" }}>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: highlightOccurrence(
+                    newsItem.newsTitle,
+                    newsItem.occurredKeys
+                  ),
+                }}
+              />
+            </Typography>
+            <Typography level="body2" sx={{ mt: 1 }}>
+              <Moment format="MMM Do YYYY h:mm a" date={newsItem?.timestamp} />
+            </Typography>
+            <Stack direction="row">
+              <Sentiment
+                pos={newsItem.positive_sentiment_percentage}
+                neg={newsItem.negative_sentiment_percentage}
+              />
+            </Stack>
+          </Fragment>
         )}
-
-        <Typography level="body2" sx={{ mt: 1 }}>
-          <Moment format="MMM Do YYYY h:mm a" date={newsItem?.timestamp} />
-        </Typography>
-        <Stack direction="row">
-          <Sentiment
-            pos={newsItem.positive_sentiment_percentage}
-            neg={newsItem.negative_sentiment_percentage}
-          />
-        </Stack>
       </Card>
     </Box>
   );

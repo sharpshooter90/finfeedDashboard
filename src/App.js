@@ -7,6 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import Divider from "@mui/joy/Divider";
+import LinearProgress from "@mui/joy/LinearProgress";
 import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
 import AppBar from "@mui/material/AppBar";
@@ -17,7 +18,6 @@ import Drawer from "@mui/material/Drawer";
 import FormControl from "@mui/material/FormControl";
 import IconButton from "@mui/material/IconButton";
 import InputLabel from "@mui/material/InputLabel";
-import LinearProgress from "@mui/material/LinearProgress";
 import NativeSelect from "@mui/material/NativeSelect";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
@@ -353,43 +353,41 @@ function App(props) {
     </Box>
   );
 
-  function renderNewsItems() {
-    if (globalLoading) {
-      return <LinearProgress />;
-    } else if (noData === false) {
+  function renderDesktopView() {
+    if (noData === false) {
       return <EmptyState />;
     } else {
       return (
-        <Stack direction="row" spacing={2} pt={2}>
-          <StyledNewsContainer style={{ width: "560px" }}>
-            {/* {data && (
-              <div>
-                {data?.length === 0 ? (
-                  <p>Nothing found</p>
-                ) : (
-                  data?.map((newsItemData, index) => {
-                    return <NewsItem newsItem={newsItemData} key={index} />;
-                  })
-                )}
-              </div>
-            )} */}
-
-            {data && <NewsWrapper data={data} />}
-          </StyledNewsContainer>{" "}
-          {bubbleChartData && (
-            <div style={{ overflow: "scroll" }}>
-              <BubbleChart
-                data={bubbleChartData}
-                width={700}
-                height={400}
-                onBubbleClick={handleBubbleClick}
-              />
-            </div>
+        <Fragment>
+          {globalLoading && (
+            <LinearProgress
+              thickness={3}
+              sx={{ position: "absolute", top: "64px", width: "100%" }}
+            />
           )}
-          <div>
-            <SentimentPieChart sentimentData={sentimentData} />
-          </div>
-        </Stack>
+          <Stack direction="row" spacing={2} pt={2}>
+            <StyledNewsContainer style={{ width: "560px" }}>
+              {<NewsWrapper data={data} loading={globalLoading} />}
+            </StyledNewsContainer>{" "}
+            {bubbleChartData ? (
+              <div style={{ overflow: "scroll" }}>
+                <BubbleChart
+                  data={bubbleChartData}
+                  width={700}
+                  height={400}
+                  onBubbleClick={handleBubbleClick}
+                />
+              </div>
+            ) : (
+              <Box sx={{ p: 2 }} width={"560px"}>
+                Loading Sentiment Split...
+              </Box>
+            )}
+            <div>
+              <SentimentPieChart sentimentData={sentimentData} />
+            </div>
+          </Stack>
+        </Fragment>
       );
     }
   }
@@ -631,10 +629,11 @@ function App(props) {
               </Box>
             </Toolbar>
           </AppBar>
-          <Box mt={8}>{renderNewsItems()}</Box>
+          <Box mt={8}>{renderDesktopView()}</Box>
           <ToastContainer
             position="bottom-center"
             autoClose={5000}
+            style={{ width: "auto" }}
             hideProgressBar={false}
             newestOnTop={false}
             closeOnClick
