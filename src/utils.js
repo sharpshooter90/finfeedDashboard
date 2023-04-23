@@ -1,3 +1,10 @@
+import SentimentDissatisfied from "@mui/icons-material/SentimentDissatisfied";
+import SentimentSatisfied from "@mui/icons-material/SentimentSatisfied";
+import SentimentVeryDissatisfied from "@mui/icons-material/SentimentVeryDissatisfied";
+import SentimentVerySatisfied from "@mui/icons-material/SentimentVerySatisfied";
+import Chip from "@mui/material/Chip";
+import React from "react";
+
 // textUtils.js
 export const countOccurrences = (searchText, content) => {
   if (!searchText || !content) return 0;
@@ -38,6 +45,53 @@ export const getSentimentStyle = (sentiment) => {
   }
 };
 
+export const getSentimentChip = (sentiment) => {
+  let icon;
+  let label;
+  let color;
+  let backgroundColor;
+
+  switch (sentiment) {
+    case "positive":
+      icon = <SentimentVerySatisfied />;
+      label = "Positive";
+      color = "primary";
+      backgroundColor = "#d1e7dd"; // Light green
+      break;
+    case "negative":
+      icon = <SentimentVeryDissatisfied />;
+      label = "Negative";
+      color = "error";
+      backgroundColor = "#f8d7da"; // Light red
+      break;
+    case "neutral":
+      icon = <SentimentSatisfied />;
+      label = "Neutral";
+      color = "warning";
+      backgroundColor = "#fff3cd"; // Light yellow
+      break;
+    case "mixed":
+      icon = <SentimentDissatisfied />;
+      label = "Mixed";
+      color = "info";
+      backgroundColor = "#cff4fc"; // Light blue
+      break;
+    default:
+      return null;
+  }
+
+  return (
+    <Chip
+      icon={icon}
+      label={label}
+      variant="filled"
+      sx={{
+        color: color,
+        backgroundColor: backgroundColor,
+      }}
+    />
+  );
+};
 export const getSentimentWithPercentage = (parsedData) => {
   const totalCount = parsedData.length;
   const sentimentCounts = parsedData.reduce(

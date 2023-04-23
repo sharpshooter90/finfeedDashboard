@@ -4,11 +4,7 @@ import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
 import React from "react";
 import Moment from "react-moment";
-import {
-  getSentiment,
-  getSentimentStyle,
-  highlightOccurrence,
-} from "../../utils";
+import { highlightOccurrence } from "../../utils";
 import Sentiment from "../Sentiment";
 
 const NewsItem = ({ newsItem }) => {
@@ -17,12 +13,12 @@ const NewsItem = ({ newsItem }) => {
       <Card
         variant="outlined"
         sx={(theme) => ({
-          ...getSentimentStyle(
-            getSentiment(
-              newsItem.negative_sentiment_percentage,
-              newsItem.positive_sentiment_percentage
-            )
-          ),
+          // ...getSentimentStyle(
+          //   getSentiment(
+          //     newsItem.negative_sentiment_percentage,
+          //     newsItem.positive_sentiment_percentage
+          //   )
+          // ),
           width: "100%",
           flexDirection: "column",
           cursor: "pointer",
