@@ -3,6 +3,8 @@ import DonutLargeIcon from "@mui/icons-material/DonutLarge";
 import FeedIcon from "@mui/icons-material/Feed";
 import MenuIcon from "@mui/icons-material/Menu";
 import Box from "@mui/joy/Box";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import Divider from "@mui/joy/Divider";
 import Stack from "@mui/joy/Stack";
@@ -77,8 +79,25 @@ function App(props) {
     setTabValue(newValue);
   };
 
+  const showToast = () => {
+    toast("📰 News will auto update in 3 mins", {
+      position: "bottom-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  };
+
   useEffect(() => {
     fetchData();
+    showToast();
+    const intervalId = setInterval(fetchData, 180000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   const parseNewsData = async (data) => {
@@ -589,6 +608,18 @@ function App(props) {
           </Toolbar>
         </AppBar>
         <Box mt={8}>{renderNewsItems()}</Box>
+        <ToastContainer
+          position="bottom-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </StyledFullHeightContainer>
     </NewsFilterContext.Provider>
   );
