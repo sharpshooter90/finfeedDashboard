@@ -80,7 +80,7 @@ function App(props) {
   };
 
   const showToast = () => {
-    toast("📰 News will auto update in 3 mins", {
+    toast("📰 News will auto update every 3 mins", {
       position: "bottom-center",
       autoClose: 5000,
       hideProgressBar: false,
