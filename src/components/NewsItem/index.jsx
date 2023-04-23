@@ -2,12 +2,13 @@ import Box from "@mui/joy/Box";
 import Card from "@mui/joy/Card";
 import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
-import React from "react";
+import { Skeleton } from "@mui/material";
+import React, { Fragment } from "react";
 import Moment from "react-moment";
 import { highlightOccurrence } from "../../utils";
 import Sentiment from "../Sentiment";
 
-const NewsItem = ({ newsItem }) => {
+const NewsItem = ({ newsItem, loading }) => {
   return (
     <Box sx={{ mb: 2, ml: 1 }}>
       <Card
@@ -30,16 +31,25 @@ const NewsItem = ({ newsItem }) => {
           },
         })}
       >
-        <Typography sx={{ fontWeight: "600" }}>
-          <div
-            dangerouslySetInnerHTML={{
-              __html: highlightOccurrence(
-                newsItem.newsTitle,
-                newsItem.occurredKeys
-              ),
-            }}
-          />
-        </Typography>
+        {loading ? (
+          <Fragment>
+            <Skeleton animation="wave" />
+            <Skeleton animation="wave" />
+            <Skeleton animation="wave" />
+          </Fragment>
+        ) : (
+          <Typography sx={{ fontWeight: "600" }}>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: highlightOccurrence(
+                  newsItem.newsTitle,
+                  newsItem.occurredKeys
+                ),
+              }}
+            />
+          </Typography>
+        )}
+
         <Typography level="body2" sx={{ mt: 1 }}>
           <Moment format="MMM Do YYYY h:mm a" date={newsItem?.timestamp} />
         </Typography>

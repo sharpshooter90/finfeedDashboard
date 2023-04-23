@@ -81,7 +81,6 @@ function App(props) {
 
   const showToast = () => {
     toast("📰 News will auto update every 3 mins", {
-      position: "bottom-center",
       autoClose: 5000,
       hideProgressBar: false,
       closeOnClick: true,
@@ -395,65 +394,78 @@ function App(props) {
     }
   }
 
-  if (isMobile) {
-    return (
-      <Fragment>
-        <AppBar component="nav">
-          <Toolbar sx={{ background: "#fff" }}>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              edge="start"
-              onClick={handleDrawerToggle}
-              sx={{ mr: 2, display: { sm: "none" }, fill: "black" }}
-            >
-              <MenuIcon sx={{ fill: "black" }} />
-            </IconButton>
-            <Typography
-              variant="h6"
-              component="div"
-              sx={{ flexGrow: 1, display: { sm: "block" } }}
-            >
-              FinFeeds
-            </Typography>
-            <Box
-              sx={{
-                display: { xs: "none", sm: "flex" },
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-              gap={2}
-            >
-              <FormControl>
-                <InputLabel variant="standard" htmlFor="uncontrolled-native">
-                  Source
-                </InputLabel>
-                <NativeSelect
-                  value={selectedSource}
-                  onChange={handleSourceChange}
-                >
-                  <option value="WSJ">WSJ</option>
-                  <option value="CNBC">CNBC</option>
-                  <option value="Polygon">Polygon</option>
-                </NativeSelect>
-              </FormControl>
-              <TextField
-                id="outlined-basic"
-                label="Search Keywords"
-                variant="outlined"
-                value={newsKeywordSearchInput}
-                onChange={handleKeywordChange}
-                placeholder="Enter keyword"
-                size="small"
-              />
-              <Button
-                variant="contained"
-                size="small"
-                onClick={handleFetchButtonClick}
+  return (
+    <NewsFilterContext.Provider value={{ filters, setFilters }}>
+      {isMobile ? (
+        <Fragment>
+          <ToastContainer
+            position="top-center"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
+          <AppBar component="nav">
+            <Toolbar sx={{ background: "#fff" }}>
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                edge="start"
+                onClick={handleDrawerToggle}
+                sx={{ mr: 2, display: { sm: "none" }, fill: "black" }}
               >
-                Fetch News
-              </Button>
-              {/* <Typography
+                <MenuIcon sx={{ fill: "black" }} />
+              </IconButton>
+              <Typography
+                variant="h6"
+                component="div"
+                sx={{ flexGrow: 1, display: { sm: "block" } }}
+              >
+                FinFeeds
+              </Typography>
+              <Box
+                sx={{
+                  display: { xs: "none", sm: "flex" },
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                gap={2}
+              >
+                <FormControl>
+                  <InputLabel variant="standard" htmlFor="uncontrolled-native">
+                    Source
+                  </InputLabel>
+                  <NativeSelect
+                    value={selectedSource}
+                    onChange={handleSourceChange}
+                  >
+                    <option value="WSJ">WSJ</option>
+                    <option value="CNBC">CNBC</option>
+                    <option value="Polygon">Polygon</option>
+                  </NativeSelect>
+                </FormControl>
+                <TextField
+                  id="outlined-basic"
+                  label="Search Keywords"
+                  variant="outlined"
+                  value={newsKeywordSearchInput}
+                  onChange={handleKeywordChange}
+                  placeholder="Enter keyword"
+                  size="small"
+                />
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={handleFetchButtonClick}
+                >
+                  Fetch News
+                </Button>
+                {/* <Typography
                 component="label"
                 endDecorator={
                   <Switch
@@ -465,134 +477,146 @@ function App(props) {
               >
                 Highlight Word occurrence
               </Typography> */}
-            </Box>
-          </Toolbar>
-          <Box component="nav">
-            <Drawer
-              container={container}
-              variant="temporary"
-              open={mobileOpen}
-              onClose={handleDrawerToggle}
-              ModalProps={{
-                keepMounted: true, // Better open performance on mobile.
-              }}
-              sx={{
-                display: { xs: "block", sm: "none" },
-                "& .MuiDrawer-paper": {
-                  boxSizing: "border-box",
-                  width: drawerWidth,
-                },
-              }}
-            >
-              {drawer}
-            </Drawer>
-          </Box>
-        </AppBar>
-        <Box mt={8} p={2}>
-          {tabValue === 0 && (
-            <div>
-              {data ? (
-                <div>
-                  {data?.map((newsItem, index) => {
-                    return <NewsItem newsItem={newsItem} index={index} />;
-                  })}
-                </div>
-              ) : (
-                <p>Loading data...</p>
-              )}
-            </div>
-          )}
-          {tabValue === 1 && (
-            <div>
-              {bubbleChartData && (
-                <div>
-                  <BubbleChart
-                    data={bubbleChartData}
-                    width={300}
-                    height={300}
-                    onBubbleClick={handleBubbleClick}
-                  />
-                </div>
-              )}
-            </div>
-          )}
-          {tabValue === 2 && (
-            <Box m={1} p={2}>
-              <SentimentPieChart sentimentData={sentimentData} />
-            </Box>
-          )}
-        </Box>
-
-        <Paper
-          sx={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 1000 }}
-          elevation={6}
-        >
-          <BottomNavigation showLabels value={tabValue} onChange={handleChange}>
-            <BottomNavigationAction label="News Feeds" icon={<FeedIcon />} />
-            <BottomNavigationAction
-              label="Sentiment split for entities"
-              icon={<BubbleChartIcon />}
-            />
-            <BottomNavigationAction
-              label="Sentiment split"
-              icon={<DonutLargeIcon />}
-            />
-          </BottomNavigation>
-        </Paper>
-      </Fragment>
-    );
-  }
-
-  return (
-    <NewsFilterContext.Provider value={{ filters, setFilters }}>
-      <StyledFullHeightContainer className="App">
-        <AppBar component="nav">
-          <Toolbar sx={{ background: "#fff" }}>
-            <Typography
-              variant="h6"
-              component="div"
-              sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
-            >
-              FinFeeds
-            </Typography>
-            <Box
-              sx={{
-                display: { xs: "none", sm: "flex" },
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-              gap={2}
-            >
-              <FormControl>
-                <InputLabel variant="standard" htmlFor="uncontrolled-native">
-                  Source
-                </InputLabel>
-                <NativeSelect
-                  value={selectedSource}
-                  onChange={handleSourceChange}
-                >
-                  <option value="WSJ">WSJ</option>
-                  <option value="CNBC">CNBC</option>
-                  <option value="Polygon">Polygon</option>
-                </NativeSelect>
-              </FormControl>
-              <TextField
-                id="outlined-basic"
-                label="Search Keywords"
-                variant="outlined"
-                value={newsKeywordSearchInput}
-                onChange={handleKeywordChange}
-                placeholder="Enter keyword"
-                size="small"
-              />
-              <Button
-                variant="contained"
-                size="small"
-                onClick={handleFetchButtonClick}
+              </Box>
+            </Toolbar>
+            <Box component="nav">
+              <Drawer
+                container={container}
+                variant="temporary"
+                open={mobileOpen}
+                onClose={handleDrawerToggle}
+                ModalProps={{
+                  keepMounted: true, // Better open performance on mobile.
+                }}
+                sx={{
+                  display: { xs: "block", sm: "none" },
+                  "& .MuiDrawer-paper": {
+                    boxSizing: "border-box",
+                    width: drawerWidth,
+                  },
+                }}
               >
-                Fetch News
-              </Button>
-              {/* <Typography
+                {drawer}
+              </Drawer>
+            </Box>
+          </AppBar>
+          <Box mt={8} p={2}>
+            {tabValue === 0 && (
+              <div>
+                {data ? (
+                  <div>
+                    {data?.map((newsItem, index) => {
+                      return (
+                        <NewsItem
+                          newsItem={newsItem}
+                          index={index}
+                          loading={globalLoading}
+                        />
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <LinearProgress />
+                )}
+              </div>
+            )}
+            {tabValue === 1 && (
+              <div>
+                {bubbleChartData && (
+                  <div>
+                    <BubbleChart
+                      data={bubbleChartData}
+                      width={300}
+                      height={300}
+                      onBubbleClick={handleBubbleClick}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+            {tabValue === 2 && (
+              <Box m={1} p={2}>
+                <SentimentPieChart sentimentData={sentimentData} />
+              </Box>
+            )}
+          </Box>
+
+          <Paper
+            sx={{
+              position: "fixed",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              zIndex: 1000,
+            }}
+            elevation={6}
+          >
+            <BottomNavigation
+              showLabels
+              value={tabValue}
+              onChange={handleChange}
+            >
+              <BottomNavigationAction label="News Feeds" icon={<FeedIcon />} />
+              <BottomNavigationAction
+                label="Sentiment split for entities"
+                icon={<BubbleChartIcon />}
+              />
+              <BottomNavigationAction
+                label="Sentiment split"
+                icon={<DonutLargeIcon />}
+              />
+            </BottomNavigation>
+          </Paper>
+        </Fragment>
+      ) : (
+        <StyledFullHeightContainer className="App">
+          <AppBar component="nav">
+            <Toolbar sx={{ background: "#fff" }}>
+              <Typography
+                variant="h6"
+                component="div"
+                sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+              >
+                FinFeeds
+              </Typography>
+              <Box
+                sx={{
+                  display: { xs: "none", sm: "flex" },
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                gap={2}
+              >
+                <FormControl>
+                  <InputLabel variant="standard" htmlFor="uncontrolled-native">
+                    Source
+                  </InputLabel>
+                  <NativeSelect
+                    value={selectedSource}
+                    onChange={handleSourceChange}
+                  >
+                    <option value="WSJ">WSJ</option>
+                    <option value="CNBC">CNBC</option>
+                    <option value="Polygon">Polygon</option>
+                  </NativeSelect>
+                </FormControl>
+                <TextField
+                  id="outlined-basic"
+                  label="Search Keywords"
+                  variant="outlined"
+                  value={newsKeywordSearchInput}
+                  onChange={handleKeywordChange}
+                  placeholder="Enter keyword"
+                  size="small"
+                />
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={handleFetchButtonClick}
+                >
+                  Fetch News
+                </Button>
+                {/* <Typography
               component="label"
               endDecorator={
                 <Switch
@@ -604,23 +628,24 @@ function App(props) {
             >
               Highlight Word occurrence
             </Typography> */}
-            </Box>
-          </Toolbar>
-        </AppBar>
-        <Box mt={8}>{renderNewsItems()}</Box>
-        <ToastContainer
-          position="bottom-center"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
-      </StyledFullHeightContainer>
+              </Box>
+            </Toolbar>
+          </AppBar>
+          <Box mt={8}>{renderNewsItems()}</Box>
+          <ToastContainer
+            position="bottom-center"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
+        </StyledFullHeightContainer>
+      )}
     </NewsFilterContext.Provider>
   );
 }
