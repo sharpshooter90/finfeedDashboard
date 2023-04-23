@@ -210,7 +210,7 @@ function App(props) {
         label: "Neutral",
         type: "neutral",
         data: sentimentData.neutral,
-        backgroundColor: "#F39C12",
+        backgroundColor: "#cff4fc",
       },
     ];
 

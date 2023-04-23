@@ -68,13 +68,14 @@ export const getSentimentChip = (sentiment) => {
       icon = <SentimentSatisfied />;
       label = "Neutral";
       color = "warning";
-      backgroundColor = "#fff3cd"; // Light yellow
+      backgroundColor = "#cff4fc"; // Light blue
+
       break;
     case "mixed":
       icon = <SentimentDissatisfied />;
       label = "Mixed";
       color = "info";
-      backgroundColor = "#cff4fc"; // Light blue
+      backgroundColor = "#fff3cd"; // Light yellow
       break;
     default:
       return null;
