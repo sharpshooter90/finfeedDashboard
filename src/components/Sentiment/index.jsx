@@ -5,10 +5,10 @@ const Sentiment = React.memo(({ neg, pos }) => {
 
   return (
     <div>
-      <p>
+      <div>
         {getSentimentChip(sentiment)}
         {/* , neg: {neg} | pos: {pos} */}
-      </p>
+      </div>
     </div>
   );
 });

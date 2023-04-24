@@ -36,7 +36,7 @@ import NewsFilterContext from "./store/newsFilterStore";
 
 import SentimentPieChart from "./components/SentimentPieChart";
 import "./styles.css";
-import { getSentimentWithPercentage } from "./utils";
+import { getSentiment, getSentimentWithPercentage } from "./utils";
 
 import { countOccurrences } from "./utils";
 
@@ -155,56 +155,76 @@ function App(props) {
       negative: [],
       neutral: [],
     };
-
+    // iterate over entities
+    let entityData = [];
     for (const entity in entities) {
-      const entityData = {
-        totalOccurrence: 0,
-        positive_sentiment_percentage: 0,
-        negative_sentiment_percentage: 0,
-      };
-
       for (const item of data) {
         if (item.newsTitle.includes(entity)) {
-          entityData.totalOccurrence += 1;
-          entityData.positive_them_percentage += parseInt(
-            item.positive_sentiment_percentage
-          );
-          entityData.negative_sentiment_percentage += parseInt(
-            item.negative_sentiment_percentage
-          );
-        }
-      }
-
-      if (entityData.totalOccurrence > 0) {
-        const avgPositive =
-          entityData.positive_sentiment_percentage / entityData.totalOccurrence;
-        const avgNegative =
-          entityData.negative_sentiment_percentage / entityData.totalOccurrence;
-
-        if (avgPositive > 50 && avgNegative > 50) {
-          sentimentData.mixed.push({
-            label: entity,
-            totalOccurrence: entityData.totalOccurrence,
-          });
-        } else if (avgPositive >= 50) {
-          sentimentData.positive.push({
-            label: entity,
-            totalOccurrence: entityData.totalOccurrence,
-          });
-        } else if (avgNegative >= 50) {
-          sentimentData.negative.push({
-            label: entity,
-            totalOccurrence: entityData.totalOccurrence,
-          });
-        } else {
-          sentimentData.neutral.push({
-            label: entity,
-            totalOccurrence: entityData.totalOccurrence,
+          entityData.push({
+            // totalOccurrence: ,
+            sentimentType: getSentiment(
+              item.negative_sentiment_percentage,
+              item.positive_sentiment_percentage
+            ),
+            entity: entity,
           });
         }
       }
     }
 
+    // combine repeated entities
+    const combineData = (data) => {
+      const combined = {};
+
+      data.forEach((item) => {
+        const { entity, sentimentType } = item;
+        if (!combined[entity]) {
+          combined[entity] = {
+            sentimentType: sentimentType,
+            entity: entity,
+            totalOccurrence: 0,
+          };
+        }
+        if (combined[entity].sentimentType === sentimentType) {
+          combined[entity].totalOccurrence++;
+        }
+      });
+
+      return Object.values(combined);
+    };
+
+    const combinedData = combineData(entityData);
+
+    for (const item of combinedData) {
+      switch (item.sentimentType) {
+        case "positive":
+          sentimentData.positive.push({
+            label: item.entity,
+            totalOccurrence: item.totalOccurrence,
+          });
+          break;
+        case "negative":
+          sentimentData.negative.push({
+            label: item.entity,
+            totalOccurrence: item.totalOccurrence,
+          });
+          break;
+        case "mixed":
+          sentimentData.mixed.push({
+            label: item.entity,
+            totalOccurrence: item.totalOccurrence,
+          });
+          break;
+        case "neutral":
+          sentimentData.neutral.push({
+            label: item.entity,
+            totalOccurrence: item.totalOccurrence,
+          });
+          break;
+        default:
+          break;
+      }
+    }
     const bubbleChartDataSets = [
       {
         label: "Mixed sentiment",

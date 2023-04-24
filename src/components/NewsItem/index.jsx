@@ -42,7 +42,7 @@ const NewsItem = ({ newsItem, loading }) => {
         ) : (
           <Fragment>
             <Typography sx={{ fontWeight: "600" }}>
-              <div
+              <span
                 dangerouslySetInnerHTML={{
                   __html: highlightOccurrence(
                     newsItem.newsTitle,
@@ -51,7 +51,7 @@ const NewsItem = ({ newsItem, loading }) => {
                 }}
               />
             </Typography>
-            <Typography level="body2" sx={{ mt: 1 }}>
+            <Typography level="body2" sx={{ mt: 1, mb: 2 }}>
               <Moment format="MMM Do YYYY h:mm a" date={newsItem?.timestamp} />
             </Typography>
             <Stack direction="row">

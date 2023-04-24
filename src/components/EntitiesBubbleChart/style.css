@@ -8,3 +8,11 @@
   pointer-events: none;
   font-size: 12px;
 }
+
+.bubble {
+  cursor: pointer;
+  transition: filter 0.3s ease;
+}
+.bubble:hover {
+  filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.3));
+}
