@@ -549,7 +549,7 @@ function App(props) {
               </div>
             )}
             {tabValue === 1 && (
-              <div>
+              <Box mb={8}>
                 {bubbleChartData && (
                   <div>
                     <BubbleChart
@@ -560,7 +560,7 @@ function App(props) {
                     />
                   </div>
                 )}
-              </div>
+              </Box>
             )}
             {tabValue === 2 && (
               <Box m={1} p={2}>
