@@ -1,3 +1,4 @@
+import { Box } from "@mui/joy";
 import React, { useContext } from "react";
 import { PieChart } from "react-minimal-pie-chart";
 import NewsFilterContext from "../../store/newsFilterStore";
@@ -28,35 +29,38 @@ const Legend = ({ data }) => {
 export const SentimentPieChart = ({ sentimentData }) => {
   const { setFilters } = useContext(NewsFilterContext);
   if (!sentimentData) {
-    return <p>Loading sentiment data...</p>;
+    return <Box>Loading data...</Box>;
   }
 
   const chartData = [
     {
       title: "Positive",
       value: sentimentData.positive,
-      color: "#27AE60",
+      color: "#4CAF50",
     },
     {
       title: "Negative",
       value: sentimentData.negative,
-      color: "#E74C3C",
+      color: "#F44336",
     },
     {
       title: "Neutral",
       value: sentimentData.neutral,
-      color: "#cff4fc",
+      color: "#9E9E9E",
     },
     {
       title: "Mixed",
       value: sentimentData.mixed,
-      color: "#F39C12",
+      color: "#FF9800",
     },
   ];
 
   return (
     <div>
       <PieChart
+        animate
+        reveal={100}
+        animationEasing="cubic-bezier(0.16, 1, 0.3, 1)"
         data={chartData}
         // lineWidth={60}
         label={({ dataEntry }) => `${Math.round(dataEntry.percentage)} %`}
@@ -64,6 +68,7 @@ export const SentimentPieChart = ({ sentimentData }) => {
           fontSize: 5,
           fontWeight: "500",
         }}
+        colo
         segmentsStyle={{ cursor: "pointer" }}
         labelPosition={50}
         onClick={(_, index) => {

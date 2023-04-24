@@ -95,8 +95,14 @@ const NewsWrapper = ({ data, loading }) => {
           {filteredNewsItems?.length === 0 && loading === false ? (
             <Box p={2}>
               <Alert variant="soft">
-                Nothing found for sentiment {filters?.sentiment[0]?.value} and
-                entity {filters?.entities[0]?.value}
+                Nothing found for sentiment&nbsp;
+                <Typography fontWeight={600}>
+                  {filters?.sentiment[0]?.value}
+                </Typography>
+                &nbsp;and entity&nbsp;
+                <Typography fontWeight={600}>
+                  {filters?.entities[0]?.value}
+                </Typography>
               </Alert>
             </Box>
           ) : (

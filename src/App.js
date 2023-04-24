@@ -230,25 +230,25 @@ function App(props) {
         label: "Mixed sentiment",
         type: "mixed",
         data: sentimentData.mixed,
-        backgroundColor: "#F39C12",
+        backgroundColor: "#FF9800",
       },
       {
         label: "Positive",
         type: "positive",
         data: sentimentData.positive,
-        backgroundColor: "#27AE60",
+        backgroundColor: "#4CAF50",
       },
       {
         label: "Negative",
         type: "negative",
         data: sentimentData.negative,
-        backgroundColor: "#E74C3C",
+        backgroundColor: "#F44336",
       },
       {
         label: "Neutral",
         type: "neutral",
         data: sentimentData.neutral,
-        backgroundColor: "#cff4fc",
+        backgroundColor: "#9E9E9E",
       },
     ];
 
@@ -390,22 +390,41 @@ function App(props) {
               {<NewsWrapper data={data} loading={globalLoading} />}
             </StyledNewsContainer>{" "}
             {bubbleChartData ? (
-              <div style={{ overflow: "scroll" }}>
+              <Box
+                style={{ overflow: "scroll" }}
+                height="100vh"
+                justifyContent="center"
+                alignItems="center"
+                display="flex"
+                flexDirection="column"
+              >
                 <BubbleChart
                   data={bubbleChartData}
                   width={700}
                   height={400}
                   onBubbleClick={handleBubbleClick}
                 />
-              </div>
+              </Box>
             ) : (
-              <Box sx={{ p: 2 }} width={"560px"}>
-                Loading Sentiment Split...
+              <Box
+                sx={{ p: 2 }}
+                width={"560px"}
+                alignItems="center"
+                justifyContent="center"
+                display="flex"
+                height="100vh"
+              >
+                Loading data...
               </Box>
             )}
-            <div>
+            <Box
+              justifyContent="center"
+              alignItems="center"
+              display="flex"
+              height="100vh"
+            >
               <SentimentPieChart sentimentData={sentimentData} />
-            </div>
+            </Box>
           </Stack>
         </Fragment>
       );
