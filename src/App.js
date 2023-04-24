@@ -92,7 +92,7 @@ function App(props) {
 
   useEffect(() => {
     fetchData();
-    showToast();
+
     const intervalId = setInterval(fetchData, 180000);
 
     return () => clearInterval(intervalId);
@@ -276,6 +276,7 @@ function App(props) {
 
   const fetchData = async (source = "WSJ", keyword = "all") => {
     setGlobalLoading(true);
+    showToast();
     if (keyword.length === 0) {
       keyword = "all";
     }
