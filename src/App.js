@@ -79,7 +79,7 @@ function App(props) {
   };
 
   const showToast = () => {
-    toast("📰 sentiments updates every 3 mins", {
+    toast("📰 Sentiment change in every 3 mins", {
       autoClose: 5000,
       hideProgressBar: false,
       closeOnClick: true,
