@@ -30,7 +30,6 @@ import styled from "styled-components";
 
 import EmptyState from "./components/EmptyState";
 import BubbleChart from "./components/EntitiesBubbleChart";
-import NewsItem from "./components/NewsItem";
 import NewsWrapper from "./components/NewsWrapper";
 import NewsFilterContext from "./store/newsFilterStore";
 
@@ -537,24 +536,16 @@ function App(props) {
               </Drawer>
             </Box>
           </AppBar>
+          {globalLoading && (
+            <LinearProgress
+              thickness={3}
+              sx={{ position: "absolute", top: "58px", width: "100%" }}
+            />
+          )}
           <Box mt={8} p={2}>
             {tabValue === 0 && (
               <div>
-                {data ? (
-                  <div>
-                    {data?.map((newsItem, index) => {
-                      return (
-                        <NewsItem
-                          newsItem={newsItem}
-                          index={index}
-                          loading={globalLoading}
-                        />
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <LinearProgress />
-                )}
+                <NewsWrapper data={data} loading={globalLoading} />
               </div>
             )}
             {tabValue === 1 && (
