@@ -79,7 +79,7 @@ function App(props) {
   };
 
   const showToast = () => {
-    toast("📰 News will auto update every 3 mins", {
+    toast("📰 sentiments updates every 3 mins", {
       autoClose: 5000,
       hideProgressBar: false,
       closeOnClick: true,
@@ -554,8 +554,8 @@ function App(props) {
                   <div>
                     <BubbleChart
                       data={bubbleChartData}
-                      width={300}
-                      height={300}
+                      width={480}
+                      height={500}
                       onBubbleClick={handleBubbleClick}
                     />
                   </div>
