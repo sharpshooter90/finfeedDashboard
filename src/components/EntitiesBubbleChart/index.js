@@ -8,7 +8,14 @@ const BubbleChart = ({ data, width, height, onBubbleClick }) => {
 
   return (
     <React.Fragment>
-      <div ref={chartRef} style={{ overflow: "scroll" }}></div>
+      <div
+        ref={chartRef}
+        style={{
+          overflow: "scroll",
+          width: width,
+          height: height,
+        }}
+      ></div>
       <Legend data={data} />
     </React.Fragment>
   );

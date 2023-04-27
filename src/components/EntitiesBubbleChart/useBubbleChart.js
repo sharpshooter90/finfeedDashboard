@@ -10,8 +10,10 @@ const useBubbleChart = (chartRef, data, width, height, onBubbleClick) => {
     const svg = d3
       .select(chartRef.current)
       .append("svg")
-      .attr("width", width)
-      .attr("height", height);
+      .attr("width", "100%")
+      .attr("height", "100%")
+      .attr("viewBox", `0 0 ${width} ${height}`)
+      .attr("preserveAspectRatio", "xMidYMid meet");
 
     const flattenedData = data.flatMap((d) =>
       d.data.map((item) => ({
@@ -28,14 +30,28 @@ const useBubbleChart = (chartRef, data, width, height, onBubbleClick) => {
       .domain([0, maxTotalOccurrence])
       .range([10, 50]);
 
+    function forceBox() {
+      for (const d of flattenedData) {
+        d.x = Math.max(
+          radiusScale(d.totalOccurrence),
+          Math.min(width - radiusScale(d.totalOccurrence), d.x)
+        );
+        d.y = Math.max(
+          radiusScale(d.totalOccurrence),
+          Math.min(height - radiusScale(d.totalOccurrence), d.y)
+        );
+      }
+    }
+
     const simulation = d3
       .forceSimulation(flattenedData)
       .force("charge", d3.forceManyBody().strength(5))
-      .force("center", d3.forceCenter(width / 2, height / 2))
+      .force("center", d3.forceCenter(width / 2, height / 2).strength(0.1))
       .force(
         "collision",
         d3.forceCollide().radius((d) => radiusScale(d.totalOccurrence))
       )
+      .force("box", forceBox)
       .on("tick", ticked);
 
     const bubbles = svg.selectAll(".bubble").data(flattenedData);
@@ -64,13 +80,17 @@ const useBubbleChart = (chartRef, data, width, height, onBubbleClick) => {
     // Show the tooltip on mouseover and hide it on mouseout
     bubbleGroup
       .on("mouseover", (event, d) => {
+        const container = chartRef.current.getBoundingClientRect();
+        const x = d.x - container.left;
+        const y = d.y - container.top;
+
         tooltip.transition().duration(200).style("opacity", 0.9);
         tooltip
           .html(
             `<div><strong>${d.label}</strong></div><div>Total Occurrence: ${d.totalOccurrence}</div>`
           )
-          .style("left", `${event.pageX}px`)
-          .style("top", `${event.pageY - 28}px`);
+          .style("left", `${x}px`)
+          .style("top", `${y - 28}px`);
       })
       .on("mouseout", () => {
         tooltip.transition().duration(500).style("opacity", 0);

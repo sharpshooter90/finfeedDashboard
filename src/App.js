@@ -37,6 +37,10 @@ import SentimentPieChart from "./components/SentimentPieChart";
 import "./styles.css";
 import { getSentiment, getSentimentWithPercentage } from "./utils";
 
+import Tab from "@mui/joy/Tab";
+import TabList from "@mui/joy/TabList";
+import TabPanel from "@mui/joy/TabPanel";
+import Tabs from "@mui/joy/Tabs";
 import { countOccurrences } from "./utils";
 
 const StyledFullHeightContainer = styled.div`
@@ -385,46 +389,60 @@ function App(props) {
               sx={{ position: "absolute", top: "64px", width: "100%" }}
             />
           )}
-          <Stack direction="row" spacing={2} pt={2}>
+          <Stack direction="row" spacing={2} p={2}>
             <StyledNewsContainer style={{ width: "560px" }}>
               {<NewsWrapper data={data} loading={globalLoading} />}
-            </StyledNewsContainer>{" "}
-            {bubbleChartData ? (
-              <Box
-                style={{ overflow: "scroll" }}
-                height="100vh"
-                justifyContent="center"
-                alignItems="center"
-                display="flex"
-                flexDirection="column"
-              >
-                <BubbleChart
-                  data={bubbleChartData}
-                  width={700}
-                  height={400}
-                  onBubbleClick={handleBubbleClick}
-                />
-              </Box>
-            ) : (
-              <Box
-                sx={{ p: 2 }}
-                width={"560px"}
-                alignItems="center"
-                justifyContent="center"
-                display="flex"
-                height="100vh"
-              >
-                Loading data...
-              </Box>
-            )}
-            <Box
-              justifyContent="center"
-              alignItems="center"
-              display="flex"
-              height="100vh"
+            </StyledNewsContainer>
+            <Tabs
+              aria-label="tabs"
+              defaultValue={0}
+              sx={{ borderRadius: "lg", flexGrow: 1 }}
             >
-              <SentimentPieChart sentimentData={sentimentData} />
-            </Box>
+              <TabList>
+                <Tab>Sentiment split for entities</Tab>
+                <Tab>Sentiment split</Tab>
+              </TabList>
+              <TabPanel value={0}>
+                {bubbleChartData ? (
+                  <Box
+                    style={{ overflow: "scroll" }}
+                    height="100vh"
+                    justifyContent="center"
+                    alignItems="center"
+                    display="flex"
+                    flexDirection="column"
+                  >
+                    <BubbleChart
+                      data={bubbleChartData}
+                      width={700}
+                      height={400}
+                      onBubbleClick={handleBubbleClick}
+                    />
+                  </Box>
+                ) : (
+                  <Box
+                    sx={{ p: 2 }}
+                    width={"560px"}
+                    alignItems="center"
+                    justifyContent="center"
+                    display="flex"
+                    height="100vh"
+                  >
+                    Loading data...
+                  </Box>
+                )}
+              </TabPanel>
+              <TabPanel value={1}>
+                <Box
+                  justifyContent="center"
+                  alignItems="center"
+                  display="flex"
+                  height="100vh"
+                >
+                  <SentimentPieChart sentimentData={sentimentData} />
+                </Box>
+              </TabPanel>
+            </Tabs>
           </Stack>
         </Fragment>
       );
